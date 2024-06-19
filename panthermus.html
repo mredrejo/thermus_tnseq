@@ -148,7 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
           </div> <!-- /navcollapse -->
           <div class="quarto-navbar-tools">
-    <a href="https://github.com/mredrejo/thnseq" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://github.com/mredrejo/thermus_tnseq" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -162,9 +162,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#genomes-dataset-and-pangenome-construction" id="toc-genomes-dataset-and-pangenome-construction" class="nav-link active" data-scroll-target="#genomes-dataset-and-pangenome-construction"><span class="header-section-number">1</span> Genomes dataset and pangenome construction</a></li>
-  <li><a href="#pangenomes-stats" id="toc-pangenomes-stats" class="nav-link" data-scroll-target="#pangenomes-stats"><span class="header-section-number">2</span> Pangenomes stats</a>
+  <li><a href="#pangenomes-stats" id="toc-pangenomes-stats" class="nav-link" data-scroll-target="#pangenomes-stats"><span class="header-section-number">2</span> Pangenomes stats</a></li>
+  <li><a href="#integration-of-tnseq-and-pangenomes" id="toc-integration-of-tnseq-and-pangenomes" class="nav-link" data-scroll-target="#integration-of-tnseq-and-pangenomes"><span class="header-section-number">3</span> Integration of TnSeq and pangenomes</a>
   <ul class="collapse">
-  <li><a href="#integration-of-tnseq-and-pangenomes" id="toc-integration-of-tnseq-and-pangenomes" class="nav-link" data-scroll-target="#integration-of-tnseq-and-pangenomes">Integration of TnSeq and pangenomes</a></li>
   <li><a href="#correlation-between-tnseq-and-pangenome" id="toc-correlation-between-tnseq-and-pangenome" class="nav-link" data-scroll-target="#correlation-between-tnseq-and-pangenome">Correlation between TnSeq and Pangenome</a></li>
   <li><a href="#enrichment-analysis" id="toc-enrichment-analysis" class="nav-link" data-scroll-target="#enrichment-analysis">Enrichment analysis</a></li>
   </ul></li>
@@ -211,7 +211,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">June 18, 2024</p>
+      <p class="date-modified">June 20, 2024</p>
     </div>
   </div>
     
@@ -296,15 +296,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="panthermus_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption><font size="2">Figure 19. Statistics of PPanGGOLIN pangenomes obtained with 40% identity and 50% coverage. The number of gene families in each partition is indicated</font></figcaption>
+<figcaption><font size="2">Figure 20. Statistics of PPanGGOLIN pangenomes obtained with 40% identity and 50% coverage. The number of gene families in each partition is indicated</font></figcaption>
 </figure>
 </div>
 </div>
 </div>
 <p>The number of clusters or gene families conserved (Shell+Persistent) increases as we go down in the taxonomical level. Note that the Shell partition shrinks at the species level, suggesting that the identity threshold is probably low at this level for a detailed pangenome analysis. However, as we will focus in the Persistent partition, the calculated pangenomes would be enough informative.</p>
 <pre><code></code></pre>
-<section id="integration-of-tnseq-and-pangenomes" class="level2">
-<h2 class="anchored" data-anchor-id="integration-of-tnseq-and-pangenomes">Integration of TnSeq and pangenomes</h2>
+</section>
+<section id="integration-of-tnseq-and-pangenomes" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Integration of TnSeq and pangenomes</h1>
 <p>As mentioned above, in order to compute the pangenomes, we carried out a new annotation of the genes in all the assemblies. This is required to have homogeneous gene definitions, but that also gives rise to some differences between the classical NCBI Genbank annotation that we used for the pangenome and the new annotations. Thus, in order to integrate the HB27 genes from TnSeq (TT_CXXXX) and pangenome genes (GCF_000008125.1_XXXXX) in the same table, we used the package <code>fuzzyjoin</code> that allows a flexible merge of the data, considering the gene start and stop as an interval rather than fixed coordinates. However, this flexibility also has a price, as we have some pangenome genes that matched with more than one gene in the classical annotation. We tested different levels of flexibility in the coordinates to maximize the number of genes in the table and at the same time minimize the number of duplicates.</p>
 <div class="cell">
 <details class="code-fold">
@@ -359,7 +360,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>We have been able to match in the pangenome 2190 genes out of 2275, with only 3 genes of the newly annotated HB27 (GCF_000008125.1_07995, GCF_000008125.1_08920, and GCF_000008125.1_08925) that matched with two genes in the classical annotation (TT_CXXXX).</p>
 <p>The final table is saved as <a href="tnseq_pangenome2275.csv">tnseq_pangenome2275.csv</a> and <a href="tnseq_pangenome2275.xlsx.">tnseq_pangenome2275.xlsx.</a></p>
-</section>
 <section id="correlation-between-tnseq-and-pangenome" class="level2">
 <h2 class="anchored" data-anchor-id="correlation-between-tnseq-and-pangenome">Correlation between TnSeq and Pangenome</h2>
 <p>Now we are going to test the correlation between the TnSeq score and group classification of the HB27 genes, with the number of conserved genes in each pangenome and the pangenome cluster.</p>
@@ -377,7 +377,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="panthermus_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption><font size="2">Figure 20. Correlation between TnSeq and Pangenome variables.</font></figcaption>
+<figcaption><font size="2">Figure 21. Correlation between TnSeq and Pangenome variables.</font></figcaption>
 </figure>
 </div>
 </div>
@@ -408,7 +408,88 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="panthermus_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption><font size="2">Figure 21. Persistant genes in each pangenome).</font></figcaption>
+<figcaption><font size="2">Figure 22. Persistant genes in each pangenome).</font></figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Now, let’s see genes distribution in the different groups using Venn diagrams.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Intermediate =</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">==</span><span class="st">"Intermediate"</span>], </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Highly_permissive =</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">==</span><span class="st">"Highly permissive"</span>], </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Less_permissive =</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">==</span><span class="st">"Less permissive"</span>], </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Persistent =</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>tt_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggvenn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: grid</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: scales</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'scales'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:purrr':
+
+    discard</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:readr':
+
+    col_factor</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tt <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#EFC000FF"</span>,<span class="st">"#0073C2FF"</span>,<span class="st">"cornflowerblue"</span>, <span class="st">"#CD534CFF"</span>),</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Thermus thermophilus"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">4</span>]] <span class="ot">&lt;-</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>thermus_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>thermus <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#EFC000FF"</span>,<span class="st">"#0073C2FF"</span>,<span class="st">"cornflowerblue"</span>, <span class="st">"#CD534CFF"</span>),</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Thermus"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">4</span>]] <span class="ot">&lt;-</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>thermaceae_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>thermaceae <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#EFC000FF"</span>,<span class="st">"#0073C2FF"</span>,<span class="st">"cornflowerblue"</span>, <span class="st">"#CD534CFF"</span>),</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Thermaceae"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">4</span>]] <span class="ot">&lt;-</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>deinococcota_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>deinococcota <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#EFC000FF"</span>,<span class="st">"#0073C2FF"</span>,<span class="st">"cornflowerblue"</span>, <span class="st">"#CD534CFF"</span>),</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Deinococcota"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(tt, thermus, thermaceae, deinococcota, </span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>,<span class="st">"C"</span>,<span class="st">"D"</span>), <span class="at">ncol=</span><span class="dv">2</span>,<span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="panthermus_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption><font size="2">Figure 23. Venn diagram of TnSeq genes categories and Persistant genes in each pangenome).</font></figcaption>
 </figure>
 </div>
 </div>
@@ -419,9 +500,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>kk <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>thermaceae_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">1</span>]),</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">organism     =</span> <span class="st">'tth'</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>kk <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>thermaceae_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">1</span>]),</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">organism     =</span> <span class="st">'tth'</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Reading KEGG annotation online: "https://rest.kegg.jp/link/tth/pathway"...</code></pre>
@@ -431,21 +512,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk, <span class="at">title=</span><span class="st">"Thermaceae core genome"</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>kk_D <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>deinococcota_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">1</span>]),</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">organism     =</span> <span class="st">'tth'</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk_D, <span class="at">title=</span><span class="st">"Deinococcota core genome"</span>)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2, </span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>), <span class="at">ncol=</span><span class="dv">1</span>,<span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk, <span class="at">title=</span><span class="st">"Thermaceae core genome"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>kk_D <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>deinococcota_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">1</span>]),</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">organism     =</span> <span class="st">'tth'</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk_D, <span class="at">title=</span><span class="st">"Deinococcota core genome"</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2, </span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>), <span class="at">ncol=</span><span class="dv">1</span>,<span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="panthermus_files/figure-html/enrichment_pan-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption><font size="2">Figure 22. Significantly enriched KEGG Ontology groups made up of Intermediate/Less permissive genes within the Core genome (persistant genes) of Thermaceae (A) or Deinococcota (B).</font></figcaption>
+<figcaption><font size="2">Figure 24. Significantly enriched KEGG Ontology groups made up of Intermediate/Less permissive genes within the Core genome (persistant genes) of Thermaceae (A) or Deinococcota (B).</font></figcaption>
 </figure>
 </div>
 </div>
@@ -453,46 +534,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>uniprot <span class="ot">&lt;-</span> <span class="fu">bitr_kegg</span>(panTnseq_Full<span class="sc">$</span>Genes, <span class="at">fromType=</span><span class="st">"kegg"</span>, <span class="at">toType=</span><span class="st">'uniprot'</span>, <span class="at">organism=</span><span class="st">'tth'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>uniprot <span class="ot">&lt;-</span> <span class="fu">bitr_kegg</span>(panTnseq_Full<span class="sc">$</span>Genes, <span class="at">fromType=</span><span class="st">"kegg"</span>, <span class="at">toType=</span><span class="st">'uniprot'</span>, <span class="at">organism=</span><span class="st">'tth'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Reading KEGG annotation online: "https://rest.kegg.jp/conv/uniprot/tth"...</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>panTnseq_Full <span class="ot">&lt;-</span> panTnseq_Full <span class="sc">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">uni =</span> <span class="fu">replace</span>(Genes, Genes <span class="sc">%in%</span> uniprot<span class="sc">$</span>kegg, uniprot<span class="sc">$</span>uniprot))</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>kk <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>thermus_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">30</span>]),</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">organism     =</span> <span class="st">'tth'</span>, <span class="at">keyType =</span> <span class="st">'uniprot'</span>,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>panTnseq_Full <span class="ot">&lt;-</span> panTnseq_Full <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">uni =</span> <span class="fu">replace</span>(Genes, Genes <span class="sc">%in%</span> uniprot<span class="sc">$</span>kegg, uniprot<span class="sc">$</span>uniprot))</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>kk <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>thermus_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">30</span>]),</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">organism     =</span> <span class="st">'tth'</span>, <span class="at">keyType =</span> <span class="st">'uniprot'</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Reading KEGG annotation online: "https://rest.kegg.jp/conv/uniprot/tth"...</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk, <span class="at">title=</span><span class="st">"Thermus core genome"</span>)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>kk_t <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>thermaceae_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">30</span>]),</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">organism     =</span> <span class="st">'tth'</span>, <span class="at">keyType =</span> <span class="st">'uniprot'</span>,</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk_t, <span class="at">title=</span><span class="st">"Thermaceae core genome"</span>)</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>kk_D <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>deinococcota_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">30</span>]),</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">organism     =</span> <span class="st">'tth'</span>, <span class="at">keyType =</span> <span class="st">'uniprot'</span>,</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk_D, <span class="at">title=</span><span class="st">"Deinococcota core genome"</span>)</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2, p3,</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>), <span class="at">ncol=</span><span class="dv">1</span>,<span class="at">nrow =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk, <span class="at">title=</span><span class="st">"Thermus core genome"</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>kk_t <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>thermaceae_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">30</span>]),</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">organism     =</span> <span class="st">'tth'</span>, <span class="at">keyType =</span> <span class="st">'uniprot'</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk_t, <span class="at">title=</span><span class="st">"Thermaceae core genome"</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>kk_D <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>deinococcota_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">30</span>]),</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">organism     =</span> <span class="st">'tth'</span>, <span class="at">keyType =</span> <span class="st">'uniprot'</span>,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk_D, <span class="at">title=</span><span class="st">"Deinococcota core genome"</span>)</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2, p3,</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>), <span class="at">ncol=</span><span class="dv">1</span>,<span class="at">nrow =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="panthermus_files/figure-html/enrichment_uniprot-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption><font size="2">Figure 23. Significantly enriched KEGG Ontology groups made up of Intermediate/Less permissive genes within the Core genome (persistant genes) of Thermaceae (A) or Deinococcota (B).</font></figcaption>
+<figcaption><font size="2">Figure 25. Significantly enriched KEGG Ontology groups made up of Intermediate/Less permissive genes within the Core genome (persistant genes) of Thermaceae (A) or Deinococcota (B).</font></figcaption>
 </figure>
 </div>
 </div>
@@ -508,7 +589,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.4.0 (2024-04-24)
@@ -526,16 +607,18 @@ time zone: Europe/Madrid
 tzcode source: internal
 
 attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
+[1] grid      stats     graphics  grDevices utils     datasets  methods  
+[8] base     
 
 other attached packages:
- [1] ggpubr_0.6.0           clusterProfiler_4.12.0 RColorBrewer_1.1-3    
- [4] corrplot_0.92          ggstats_0.6.0          patchwork_1.2.0       
- [7] lubridate_1.9.3        forcats_1.0.0          stringr_1.5.1         
-[10] purrr_1.0.2            readr_2.1.5            tidyr_1.3.1           
-[13] tibble_3.2.1           tidyverse_2.0.0        dplyr_1.1.4           
-[16] DT_0.33                data.table_1.15.4      ggplot2_3.5.1         
-[19] formatR_1.14           knitr_1.47            
+ [1] ggvenn_0.1.10          scales_1.3.0           ggpubr_0.6.0          
+ [4] clusterProfiler_4.12.0 RColorBrewer_1.1-3     corrplot_0.92         
+ [7] ggstats_0.6.0          patchwork_1.2.0        lubridate_1.9.3       
+[10] forcats_1.0.0          stringr_1.5.1          purrr_1.0.2           
+[13] readr_2.1.5            tidyr_1.3.1            tibble_3.2.1          
+[16] tidyverse_2.0.0        dplyr_1.1.4            DT_0.33               
+[19] data.table_1.15.4      ggplot2_3.5.1          formatR_1.14          
+[22] knitr_1.47            
 
 loaded via a namespace (and not attached):
   [1] rstudioapi_0.16.0       jsonlite_1.8.8          magrittr_2.0.3         
@@ -557,25 +640,25 @@ loaded via a namespace (and not attached):
  [49] ggsignif_0.6.4          MASS_7.3-61             HDO.db_0.99.1          
  [52] tools_4.4.0             ape_5.8                 scatterpie_0.2.3       
  [55] glue_1.7.0              nlme_3.1-165            GOSemSim_2.30.0        
- [58] grid_4.4.0              shadowtext_0.1.3        reshape2_1.4.4         
- [61] fgsea_1.30.0            generics_0.1.3          gtable_0.3.5           
- [64] tzdb_0.4.0              hms_1.1.3               car_3.1-2              
- [67] tidygraph_1.3.1         utf8_1.2.4              XVector_0.44.0         
- [70] BiocGenerics_0.50.0     ggrepel_0.9.5           pillar_1.9.0           
- [73] vroom_1.6.5             yulab.utils_0.1.4       splines_4.4.0          
- [76] tweenr_2.0.3            treeio_1.28.0           lattice_0.22-6         
- [79] bit_4.0.5               tidyselect_1.2.1        GO.db_3.19.1           
- [82] Biostrings_2.72.1       gridExtra_2.3           IRanges_2.38.0         
- [85] stats4_4.4.0            xfun_0.45               graphlayouts_1.1.1     
- [88] Biobase_2.64.0          stringi_1.8.4           UCSC.utils_1.0.0       
- [91] lazyeval_0.2.2          ggfun_0.1.5             yaml_2.3.8             
- [94] evaluate_0.24.0         codetools_0.2-20        ggraph_2.2.1           
- [97] qvalue_2.36.0           ggplotify_0.1.2         cli_3.6.2              
-[100] munsell_0.5.1           Rcpp_1.0.12             GenomeInfoDb_1.40.1    
-[103] png_0.1-8               parallel_4.4.0          blob_1.2.4             
-[106] DOSE_3.30.1             viridisLite_0.4.2       tidytree_0.4.6         
-[109] scales_1.3.0            crayon_1.5.2            rlang_1.1.4            
-[112] cowplot_1.1.3           fastmatch_1.1-4         KEGGREST_1.44.0        </code></pre>
+ [58] shadowtext_0.1.3        reshape2_1.4.4          fgsea_1.30.0           
+ [61] generics_0.1.3          gtable_0.3.5            tzdb_0.4.0             
+ [64] hms_1.1.3               car_3.1-2               tidygraph_1.3.1        
+ [67] utf8_1.2.4              XVector_0.44.0          BiocGenerics_0.50.0    
+ [70] ggrepel_0.9.5           pillar_1.9.0            vroom_1.6.5            
+ [73] yulab.utils_0.1.4       splines_4.4.0           tweenr_2.0.3           
+ [76] treeio_1.28.0           lattice_0.22-6          bit_4.0.5              
+ [79] tidyselect_1.2.1        GO.db_3.19.1            Biostrings_2.72.1      
+ [82] gridExtra_2.3           IRanges_2.38.0          stats4_4.4.0           
+ [85] xfun_0.45               graphlayouts_1.1.1      Biobase_2.64.0         
+ [88] stringi_1.8.4           UCSC.utils_1.0.0        lazyeval_0.2.2         
+ [91] ggfun_0.1.5             yaml_2.3.8              evaluate_0.24.0        
+ [94] codetools_0.2-20        ggraph_2.2.1            qvalue_2.36.0          
+ [97] ggplotify_0.1.2         cli_3.6.2               munsell_0.5.1          
+[100] Rcpp_1.0.12             GenomeInfoDb_1.40.1     png_0.1-8              
+[103] parallel_4.4.0          blob_1.2.4              DOSE_3.30.1            
+[106] viridisLite_0.4.2       tidytree_0.4.6          crayon_1.5.2           
+[109] rlang_1.1.4             cowplot_1.1.3           fastmatch_1.1-4        
+[112] KEGGREST_1.44.0        </code></pre>
 </div>
 </div>
 

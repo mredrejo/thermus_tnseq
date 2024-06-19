@@ -184,7 +184,7 @@ div.csl-indent {
 </ul>
           </div> <!-- /navcollapse -->
           <div class="quarto-navbar-tools">
-    <a href="https://github.com/mredrejo/thnseq" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://github.com/mredrejo/thermus_tnseq" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -252,7 +252,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">June 18, 2024</p>
+      <p class="date-modified">June 19, 2024</p>
     </div>
   </div>
     
@@ -288,13 +288,14 @@ div.csl-indent {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="genes_classification_files/figure-html/density-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Figure 8. Density plot of Z-scores.</figcaption>
+<figcaption>Figure 9. Density plot of Z-scores.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>In agreement with Figure 6, we can see that most of the genes are grouped at a Z-score &lt;0, with a peak about -0.5 (<span style="color:grey;">grey line</span>) and a shoulder centered at 1 (<span style="color:orange;">orange line</span>). That suggest that most genes have a low number of insertions and there is a gradient of genes up to a very high number of insertions. Thus, as there is no inflection point, we confirm that there are no clear groups of essential/no essential genes.</p>
-<p>In order to classify the genes we are going to perform unsupervised cluster analysis. First, we will test the number of clusters that allow us to better classify the genes.</p>
+<p>In agreement with Figure 8, we can see that most of the genes are grouped at a Z-score &lt;0, with a peak about -0.5 (<span style="color:grey;">grey line</span>) and a shoulder centered at 1 (<span style="color:orange;">orange line</span>). That suggest that most genes have a low number of insertions and there is a gradient of genes up to a very high number of insertions.</p>
+<p>In previous bacteria TnSeq data scores follow a bimodal distribution made up of an exponential distribution of the essential genes and a gamma family curve for non-essential ones, with an inflection point between them <span class="citation" data-cites="goodall2018 valentino2014">(<a href="#ref-goodall2018" role="doc-biblioref">Goodall et al. 2018</a>.; <a href="#ref-valentino2014" role="doc-biblioref">Valentino et al. 2014</a>)</span>. However, in our data there is no inflection point, so we confirm that there are no clear groups of essential/no essential genes and only a gamma distribution can be fitted (p-value 2x10<sup>-16</sup>).</p>
+<p>Thus, to attempt an aproximated classification of the genes we are going to perform unsupervised cluster analysis. First, we will test the number of clusters that allow us to better classify the genes.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -315,7 +316,7 @@ div.csl-indent {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="genes_classification_files/figure-html/clustering-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Figure 9. Determination of best number of clusters for the TnSeq data, using the elbow (A) or silhouette (B) method. Panels (C) and (D) show the number of clusters by PAM and K-means, respectively.)</figcaption>
+<figcaption>Figure 10. Determination of best number of clusters for the TnSeq data, using the elbow (A) or silhouette (B) method. Panels (C) and (D) show the number of clusters by PAM and K-means, respectively.)</figcaption>
 </figure>
 </div>
 </div>
@@ -372,7 +373,7 @@ div.csl-indent {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="genes_classification_files/figure-html/hotspot-1.png" class="img-fluid figure-img" width="768"></p>
-<figcaption>Figure 10. Comparison of clustering method. Cluster results and silhouette plots for K-Means (A) and PAM (B) clustering method is shown.</figcaption>
+<figcaption>Figure 11. Comparison of clustering method. Cluster results and silhouette plots for K-Means (A) and PAM (B) clustering method is shown.</figcaption>
 </figure>
 </div>
 </div>
@@ -448,7 +449,7 @@ short variable and have been discarded</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="genes_classification_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Figure 11. Plot of Tn insertion Z-scores per gene and group. Values were sorted by the average of all samples.</figcaption>
+<figcaption>Figure 12. Plot of Tn insertion Z-scores per gene and group. Values were sorted by the average of all samples.</figcaption>
 </figure>
 </div>
 </div>
@@ -548,7 +549,7 @@ increasing max.overlaps</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="genes_classification_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Figure 12. Volcano plot of differential Tn5 target genes in HB27 vs.&nbsp;Ppol strains (fold change &gt;4, p.adj&lt;0.01).</figcaption>
+<figcaption>Figure 13. Volcano plot of differential Tn5 target genes in HB27 vs.&nbsp;Ppol strains (fold change &gt;4, p.adj&lt;0.01).</figcaption>
 </figure>
 </div>
 </div>
@@ -592,7 +593,7 @@ increasing max.overlaps</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="genes_classification_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="1152"></p>
-<figcaption>Figure 13. COG groups annotated in HB27 genes</figcaption>
+<figcaption>Figure 14. COG groups annotated in HB27 genes</figcaption>
 </figure>
 </div>
 </div>
@@ -656,7 +657,7 @@ increasing max.overlaps</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="genes_classification_files/figure-html/cog-1.png" class="img-fluid figure-img" width="576"></p>
-<figcaption>Figure 14. Tn insertion scores per gene. Correlation between samples in WT (A) and Ppol (B) strains. Genes are colored by COG group</figcaption>
+<figcaption>Figure 15. Tn insertion scores per gene. Correlation between samples in WT (A) and Ppol (B) strains. Genes are colored by COG group</figcaption>
 </figure>
 </div>
 </div>
@@ -700,7 +701,7 @@ short variable and have been discarded</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="genes_classification_files/figure-html/cog2-1.png" class="img-fluid figure-img" width="960"></p>
-<figcaption>Figure 15. Distribution of gene groups by COG functions</figcaption>
+<figcaption>Figure 16. Distribution of gene groups by COG functions</figcaption>
 </figure>
 </div>
 </div>
@@ -715,7 +716,7 @@ short variable and have been discarded</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="genes_classification_files/figure-html/cog3-1.png" class="img-fluid figure-img" width="960"></p>
-<figcaption>Figure 16. Distribution of COG functions in Less permissive genes</figcaption>
+<figcaption>Figure 17. Distribution of COG functions in Less permissive genes</figcaption>
 </figure>
 </div>
 </div>
@@ -747,7 +748,7 @@ short variable and have been discarded</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="genes_classification_files/figure-html/kegg-1.png" class="img-fluid figure-img" width="1152"></p>
-<figcaption>Figure 17. Ratio of Highly permissive (blue), Intermediate (green) and Less permissive (red) genes in each KEGG Ontology group</figcaption>
+<figcaption>Figure 18. Ratio of Highly permissive (blue), Intermediate (green) and Less permissive (red) genes in each KEGG Ontology group</figcaption>
 </figure>
 </div>
 </div>
@@ -764,7 +765,7 @@ short variable and have been discarded</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="genes_classification_files/figure-html/topkegg-1.png" class="img-fluid figure-img" width="1152"></p>
-<figcaption>Figure 18. KEGG ontology categories for Less permissive genes</figcaption>
+<figcaption>Figure 19. KEGG ontology categories for Less permissive genes</figcaption>
 </figure>
 </div>
 </div>
@@ -799,7 +800,7 @@ short variable and have been discarded</code></pre>
 <span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>hr_link <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"https://www.kegg.jp/kegg-bin/show_pathway?tth03430/"</span>,<span class="fu">paste0</span>(hr[hr<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly permissive"</span>,<span class="dv">1</span>],<span class="at">collapse=</span><span class="st">"/"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>As an example, you can see the HB27 DNA replication &amp; repair pathways in the following links: <a href="https://www.kegg.jp/kegg-bin/show_pathway?tth03030/TT_C0206/TT_C0434/TT_C0690/TT_C0732/TT_C0896/TT_C1106/TT_C1191/TT_C1509/TT_C1588/TT_C1609/TT_C1788/TT_C1806" target="_blank">Replication</a>, <a href="https://www.kegg.jp/kegg-bin/show_pathway?tth03410/TT_C0366/TT_C0482/TT_C0690/TT_C0732/TT_C0784/TT_C0803/TT_C1535/TT_C1654" target="_blank">BER</a>, <a href="https://www.kegg.jp/kegg-bin/show_pathway?tth03420/TT_C0533/TT_C0690/TT_C0732/TT_C1062/TT_C1182/TT_C1531" target="_blank">NER</a>, <a href="https://www.kegg.jp/kegg-bin/show_pathway?tth03430/TT_C0206/TT_C0434/TT_C0732/TT_C0803/TT_C1062/TT_C1282/TT_C1509/TT_C1588/TT_C1609/TT_C1806" target="_blank">MMR</a>, and <a href="https://www.kegg.jp/kegg-bin/show_pathway?tth03430/TT_C0038/TT_C0206/TT_C0258/TT_C0434/TT_C0690/TT_C0725/TT_C0803/TT_C0902/TT_C1236/TT_C1466/TT_C1509/TT_C1588/TT_C1609/TT_C1721/TT_C1806/TT_C1942" target="_blank">HR</a>. The genes with orthologs in HB27 are depicted with green background and the Intermediate/Less permissive genes are highlighted in red.</p>
+<p>As an example, you can see the HB27 DNA replication &amp; repair pathways in the following links: <a href="`r repli_link`" target="_blank">Replication</a>, <a href="`r ber_link`" target="_blank">BER</a>, <a href="`r ner_link`" target="_blank">NER</a>, <a href="`r mmr_link`" target="_blank">MMR</a>, and <a href="`r hr_link`" target="_blank">HR</a>. The genes with orthologs in HB27 are depicted with green background and the Intermediate/Less permissive genes are highlighted in red.</p>
 </section>
 <section id="enrichment-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="enrichment-analysis">Enrichment analysis</h3>
@@ -846,7 +847,7 @@ short variable and have been discarded</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="genes_classification_files/figure-html/enrichment_pan-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Figure 19. Significantly enriched KEGG Ontology groups made up of Less permissive genes by KEGG ontology groups (A) or KEGG modules (B).</figcaption>
+<figcaption>Figure 20. Significantly enriched KEGG Ontology groups made up of Less permissive genes by KEGG ontology groups (A) or KEGG modules (B).</figcaption>
 </figure>
 </div>
 </div>
@@ -957,6 +958,12 @@ loaded via a namespace (and not attached):
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-cantalapiedra2021" class="csl-entry" role="listitem">
 Cantalapiedra, Carlos P., Ana Hernández-Plaza, Ivica Letunic, Peer Bork, and Jaime Huerta-Cepas. 2021. <span>“eggNOG-mapper v2: Functional Annotation, Orthology Assignments, and Domain Prediction at the Metagenomic Scale.”</span> <em>Molecular Biology and Evolution</em> 38 (12): 5825–29. <a href="https://doi.org/10.1093/molbev/msab293">https://doi.org/10.1093/molbev/msab293</a>.
+</div>
+<div id="ref-goodall2018" class="csl-entry" role="listitem">
+Goodall, Emily C. A., Ashley Robinson, Iain G. Johnston, Sara Jabbari, Keith A. Turner, Adam F. Cunningham, Peter A. Lund, Jeffrey A. Cole, and Ian R. Henderson. 2018. <span>“The Essential Genome of Escherichia Coli k-12.”</span> <em>mBio</em> 9 (1): 10.1128/mbio.02096–17. <a href="https://doi.org/10.1128/mbio.02096-17">https://doi.org/10.1128/mbio.02096-17</a>.
+</div>
+<div id="ref-valentino2014" class="csl-entry" role="listitem">
+Valentino, Michael D., Lucy Foulston, Ama Sadaka, Veronica N. Kos, Regis A. Villet, John Santa Maria, David W. Lazinski, et al. 2014. <span>“Genes contributing to Staphylococcus aureus fitness in abscess- and infection-related ecologies.”</span> <em>mBio</em> 5 (5): e01729–01714. <a href="https://doi.org/10.1128/mBio.01729-14">https://doi.org/10.1128/mBio.01729-14</a>.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
