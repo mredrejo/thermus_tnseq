@@ -304,8 +304,8 @@ div.csl-indent {
 </details>
 </div>
 <p>In agreement with Figure 8, we can see that most of the genes are grouped at a Z-score &lt;0, with a peak about -0.5 (<span style="color:grey;">grey line</span>) and a shoulder centered at 1 (<span style="color:orange;">orange line</span>). That suggest that most genes have a low number of insertions and there is a gradient of genes up to a very high number of insertions.</p>
-<p>In previous bacteria TnSeq data scores follow a bimodal distribution made up of an exponential distribution of the essential genes and a gamma family curve for non-essential ones, with an inflection point between them <span class="citation" data-cites="goodall2018 valentino2014">(<a href="#ref-goodall2018" role="doc-biblioref">Goodall et al. 2018</a>.; <a href="#ref-valentino2014" role="doc-biblioref">Valentino et al. 2014</a>)</span>. However, in our data there is no inflection point, so we confirm that there are no clear groups of essential/no essential genes and only a gamma distribution can be fitted (p-value 2x10<sup>-16</sup>).</p>
-<p>Thus, to attempt an aproximated classification of the genes we are going to perform unsupervised cluster analysis. First, we will test the number of clusters that allow us to better classify the genes.</p>
+<p>In previous bacteria TnSeq data scores follow a bimodal distribution made up of an exponential distribution of the essential genes and a gamma family curve for non-essential ones, with an inflection point between them <span class="citation" data-cites="goodall2018 moule2014 valentino2014 higgins2020 ramsey2020">(<a href="#ref-goodall2018" role="doc-biblioref">Goodall et al. 2018</a>.; <a href="#ref-moule2014" role="doc-biblioref">Moule et al. 2014</a>; <a href="#ref-valentino2014" role="doc-biblioref">Valentino et al. 2014</a>; <a href="#ref-higgins2020" role="doc-biblioref">Higgins et al. 2020</a>; <a href="#ref-ramsey2020" role="doc-biblioref">Ramsey et al. 2020</a>)</span>. However, in our data there is no inflection point, so we confirm that there are no clear groups of essential/no essential genes and only a gamma distribution can be fitted (p-value 2x10<sup>-16</sup>).</p>
+<p>Thus, to attempt an approximated classification of the genes we are going to perform unsupervised cluster analysis. First, we will test the number of clusters that allow us to better classify the genes.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -987,6 +987,15 @@ Cantalapiedra, Carlos P., Ana Hernández-Plaza, Ivica Letunic, Peer Bork, and Ja
 </div>
 <div id="ref-goodall2018" class="csl-entry" role="listitem">
 Goodall, Emily C. A., Ashley Robinson, Iain G. Johnston, Sara Jabbari, Keith A. Turner, Adam F. Cunningham, Peter A. Lund, Jeffrey A. Cole, and Ian R. Henderson. 2018. <span>“The Essential Genome of Escherichia Coli k-12.”</span> <em>mBio</em> 9 (1): 10.1128/mbio.02096–17. <a href="https://doi.org/10.1128/mbio.02096-17">https://doi.org/10.1128/mbio.02096-17</a>.
+</div>
+<div id="ref-higgins2020" class="csl-entry" role="listitem">
+Higgins, Steven, Stefano Gualdi, Marta Pinto-Carbó, and Leo Eberl. 2020. <span>“Copper Resistance Genes of Burkholderia Cenocepacia H111 Identified by Transposon Sequencing.”</span> <em>Environmental Microbiology Reports</em> 12 (2): 241–49. <a href="https://doi.org/10.1111/1758-2229.12828">https://doi.org/10.1111/1758-2229.12828</a>.
+</div>
+<div id="ref-moule2014" class="csl-entry" role="listitem">
+Moule, Madeleine G., Claudia M. Hemsley, Qihui Seet, José Afonso Guerra-Assunção, Jiali Lim, Mitali Sarkar-Tyson, Taane G. Clark, et al. 2014. <span>“Genome-wide saturation mutagenesis of Burkholderia pseudomallei K96243 predicts essential genes and novel targets for antimicrobial development.”</span> <em>mBio</em> 5 (1): e00926–00913. <a href="https://doi.org/10.1128/mBio.00926-13">https://doi.org/10.1128/mBio.00926-13</a>.
+</div>
+<div id="ref-ramsey2020" class="csl-entry" role="listitem">
+Ramsey, Kathryn M., Hannah E. Ledvina, Tenayaann M. Tresko, Jamie M. Wandzilak, Catherine A. Tower, Thomas Tallo, Caroline E. Schramm, et al. 2020. <span>“Tn-Seq reveals hidden complexity in the utilization of host-derived glutathione&nbsp;in Francisella&nbsp;tularensis.”</span> <em>PLoS pathogens</em> 16 (6): e1008566. <a href="https://doi.org/10.1371/journal.ppat.1008566">https://doi.org/10.1371/journal.ppat.1008566</a>.
 </div>
 <div id="ref-valentino2014" class="csl-entry" role="listitem">
 Valentino, Michael D., Lucy Foulston, Ama Sadaka, Veronica N. Kos, Regis A. Villet, John Santa Maria, David W. Lazinski, et al. 2014. <span>“Genes contributing to Staphylococcus aureus fitness in abscess- and infection-related ecologies.”</span> <em>mBio</em> 5 (5): e01729–01714. <a href="https://doi.org/10.1128/mBio.01729-14">https://doi.org/10.1128/mBio.01729-14</a>.
