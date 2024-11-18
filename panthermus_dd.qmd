@@ -1,0 +1,523 @@
+---
+title: "Thermus Pangenome"
+author: 
+  - name: Modesto
+    affiliation: Department of Biochemistry, UAM
+    affiliation_url: https://www.uam.es/
+date: "April 26, 2024"
+date-modified: "`r format(Sys.time(), '%Y-%m-%d (%H:%M h)')`"
+format: 
+  html:
+    page-layout: full
+toc: true
+toc-location: left
+toc-depth: 3
+number-sections: true
+number-depth: 1
+code-overflow: wrap
+code-fold: true
+code-summary: "Show the code"
+link-external-icon: true
+link-external-newwindow: true 
+editor: visual
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+paquetes <- c("knitr","formatR","ggplot2","data.table","DT", "dplyr","tidyverse","patchwork","ggstats","corrplot","RColorBrewer","clusterProfiler","ggpubr","readxl","venneuler")
+unavailable <- setdiff(paquetes, rownames(installed.packages()))
+if ("clusterProfiler" %in% unavailable) {   BiocManager::install("Rsubread")
+    } 
+install.packages(unavailable )
+lapply(paquetes, library, character.only = TRUE)
+
+#Figure and Table Caption Numbering, for HTML do it manually
+outputFormat   = opts_knit$get("rmarkdown.pandoc.to")
+capTabNo = 1; capFigNo = 23;
+
+#Function to add the Table Number
+capTab = function(x){
+  if(outputFormat == 'html_document'){
+    x = paste0("Table ",capTabNo,". ",x)
+    capTabNo <<- capTabNo + 1
+  }; x
+}
+
+#Function to add the Figure Number
+figuritas <- data.frame()
+capFig = function(x){
+  if(outputFormat == 'html'){
+    x = paste0("<font size=\"2\">Figure ",capFigNo,". ",x,"</font>")
+    capFigNo <<- capFigNo + 1
+  }; x
+ figuritas[(capFigNo-1),1] <<- x
+}
+```
+
+# Genomes dataset and pangenome construction
+
+We downloaded (May 27th, 2024) all the Phylum *Deinococcota* assemblies from Refseq database using the NCBI tool `datasets` (v.16.5.0) installed in Conda.
+
+```{bash datasets, echo=TRUE, eval=FALSE}
+conda activate ncbi_datasets
+conda update -c conda-forge ncbi-datasets-cli
+cd thermaceae/thermus_refseq
+datasets download genome taxon Thermaceae --filename thermaceae_dataset.zip --exclude-atypical --assembly-source 'refseq'
+```
+
+To obtain an index of the genome files, we converted the `dataset_catalog.json` to CSV (<https://www.convertcsv.com/json-to-csv.htm>) to obtain the file [fasta.csv](thermaceae/thermaceae_dataset/fasta.csv).
+
+To work with homogeneous and updated genome annotations, we subsequently re-annotated all genome assemblies with `Bakta` (from Conda, v. 1.9.2) using the full database (DDBB v. 5.1) and the options `--skip-crispr --force`.
+
+```{bash annotation, echo=TRUE, eval=FALSE}
+cd pangenomes/deinococcota/ncbi_dataset/data
+conda activate bakta
+conda update bakta
+bakta_db download --output /Volumes/Trastero4/ddbb --type full 
+#database is in external HD
+while IFS=, read -r col1 col2 col3
+    do
+        bakta --db /Volumes/Trastero4/ddbb/bakta-db --verbose --output ../../../bakta_results/$col3 --prefix $col3 --locus-tag $col3 --threads 16 $col1
+    done < <(tail -n +2 fasta.csv)
+```
+
+The pangenomes were constructed with `PPanGGOLIN` (v. 2.0.5) installed in Conda. You can see the whole documentation about PPanGGOLIN and the output files [here](https://ppanggolin.readthedocs.io/en/latest/index.html). In order to construct different pangenomes at species, genus, family and order levels, we parse the taxonomy from NCBI datasets using [`dataformat`](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/reference-docs/command-line/dataformat/) tool and then use a short R script ([`parse_taxonomy.R`](scripts/parse_taxonomy.R)) to generate the annotated genomes table lists.
+
+After testing different alternative datasets and clustering combinations, we empirically set the MMSeqs clustering sequence identity and coverage parameters to 0.4 and 0.5, respectively.
+
+```{bash pangenome, echo=TRUE, eval=FALSE}
+#STEP 2
+#Run ppanggolin and write extra output files
+conda activate bioconda
+cd pangenomes
+ppanggolin workflow --anno deinococcota.gbff.list --basename deinococcota --identity 0.4 --coverage 0.5 -o deinococcota_i4c5 -c 16 -f
+ppanggolin workflow --anno thermaceae.gbff.list --basename thermaceae --identity 0.4 --coverage 0.5 -o thermaceae_i4c5 -c 16 -f
+ppanggolin workflow --anno thermus.gbff.list --basename thermus --identity 0.4 --coverage 0.5 -o thermus_i4c5 -c 16 -f
+ppanggolin workflow --anno tt.gbff.list --basename tthermophilus --identity 0.4 --coverage 0.5 -o tt_i4c5 -c 16 -f
+```
+
+Additionally, before moving forward with the pangenome, as reference, we are going to incorporate the gene names from the *Thermus* *thermophilus* strain HB27, as annotated in the NCBI Refseq assembly ([GCF_000008125.1](#0)).
+
+# Pangenomes stats
+
+Now, we are going to have a look to the main pangenome stats.
+
+```{r fig4a,fig.cap=capFig("Statistics of PPanGGOLIN pangenomes obtained with 40% identity and 50% coverage. The number of gene families in each partition is indicated")}
+pangenomes <- c("tt_i4c5","thermus_i4c5","thermaceae_i4c5","deinococcota_i4c5")
+names(pangenomes) <- c("Thermus thermophilus","Thermus","Thermaceae","Deinococcota")
+#stats from all metagenomes
+cloud <- c()
+shell <- c()
+persistent <- c()
+for (i in 1:length(pangenomes)){
+  cloud[i] <- length(read_lines(paste0("pangenomes/",pangenomes[i],"/partitions/cloud.txt")))
+  shell[i] <- length(read_lines(paste0("pangenomes/",pangenomes[i],"/partitions/shell.txt")))
+  persistent[i] <- length(read_lines(paste0("pangenomes/",pangenomes[i],"/partitions/persistent.txt")))
+}
+stats <- data.frame(cloud,shell,persistent)
+row.names(stats) <- names(pangenomes)
+stats <- cbind(row.names(stats),stack(stats))
+names(stats) <- c("level","numbers","partition")
+#plot
+ggplot(stats,aes(x=level, y=numbers,group=partition)) + 
+         geom_bar(aes(fill=partition),stat = "identity",position="fill",color="grey40", alpha=0.8) + ylab("Gene families (%)")+ geom_text(aes(label=numbers),size=5, position = position_fill(vjust=0.5) , col = "black")+xlab("Pangenome level") +scale_y_continuous(labels = scales::percent) + theme_bw()+scale_fill_manual(values=c("#bbe59f","#abc837","#339933") )
+```
+```{r fig4a2,echo=FALSE,eval=FALSE}
+#plot for paper
+ggplot(stats,aes(x=level, y=numbers,group=partition)) + 
+     geom_bar(aes(fill=partition),stat = "identity",position="fill",color="grey40", alpha=0.8) + ylab("Gene families (%)")+ geom_text(aes(label=numbers),size=4, position = position_fill(vjust=0.5) , col = "black")+xlab("Pangenome level") +scale_y_continuous(labels = scales::percent) + labs(fill="Pangenome Partition")+theme_bw()+theme(axis.text.x = element_text(angle = 45,vjust=1,hjust=1),text=element_text(face="bold"))+scale_fill_manual(values=c("#bbe59f","#abc837","#339933") )
+#ggsave("figS4a.pdf",width=5,height=5)
+```
+
+The number of clusters or gene families conserved (Shell+Persistent) increases as we go down in the taxonomical level. Note that the Shell partition shrinks at the species level, suggesting that the identity threshold is probably low at this level for a detailed pangenome analysis. However, as we will focus in the Persistent partition, the calculated pangenomes would be enough informative.
+
+```         
+```
+
+# Integration of TnSeq and pangenomes
+
+As mentioned above, in order to compute the pangenomes, we carried out a new annotation of the genes in all the assemblies. This is required to have homogeneous gene definitions, but that also gives rise to some differences between the classical NCBI Genbank annotation that we used for the pangenome and the new annotations. Thus, in order to integrate the HB27 genes from TnSeq (TT_CXXXX) and pangenome genes (GCF_000008125.1_XXXXX) in the same table, we used the package `fuzzyjoin` that allows a flexible merge of the data, considering the gene start and stop as an interval rather than fixed coordinates. However, this flexibility also has a price, as we have some pangenome genes that matched with more than one gene in the classical annotation. We tested different levels of flexibility in the coordinates to maximize the number of genes in the table and at the same time minimize the number of duplicates.
+
+```{r crossdata}
+#cross GCA_000008125.1 in all pangenomes
+matrix <- list()
+HB27 <- data.frame()
+for (i in 1:length(pangenomes)){
+  matrix[[i]]<- read.table(paste0("pangenomes/",pangenomes[i],"/table/GCF_000008125.1.tsv"),header=TRUE,sep="\t")
+}
+HB27 <- merge(matrix[[1]][,c(1:4,8)],matrix[[2]][,c(1:4,8)],by=c("gene","contig","start","stop"),all=TRUE)
+colnames(HB27)[5:6] <- pangenomes[1:2]
+HB27 <- merge(HB27,matrix[[3]][,c(1:4,8)],by=c("gene","contig","start","stop"),all=TRUE)
+HB27 <- merge(HB27,matrix[[4]][,c(1:4,8)],by=c("gene","contig","start","stop"),all=TRUE)
+colnames(HB27)[7:8] <- pangenomes[3:4]
+
+#cross gene names 
+tnseq <- read.csv2("tnSeq_dd_full.csv")
+HB27_genome <- read.table("00_raw/refs/GCA_000008125.1.gtf",sep="\t",header=FALSE)
+HB27_genome$Chr <- "AE017221.1"
+HB27_genome$Chr[8088:nrow(HB27_genome)] <- "AE017222.1"
+HB27_genome$V9 <-  substr(HB27_genome$V9,9,16)
+colnames(HB27_genome)[c(4:5,9)] <- c("start","stop","Genes")
+#to reduce differnces in gene annotation, we use fuzzyjoin
+#we use the highest max_dist value that don't give rise to duplicate gene names 
+tmp <- fuzzyjoin::difference_inner_join(HB27[HB27$contig=="contig_1",],HB27_genome[HB27_genome$V3=="CDS" & HB27_genome$V1=="AE017221.1" ,c(4:5,9)], by =c("start", "stop"), max_dist = 210 )
+tmp2 <- fuzzyjoin::difference_inner_join(HB27[HB27$contig=="contig_2",],HB27_genome[HB27_genome$V3=="CDS" & HB27_genome$V1=="AE017222.1" ,c(4:5,9)], by =c("start", "stop"), max_dist = 210 )
+HB27_annotated <- rbind(tmp,tmp2)
+
+#now we fetch the number of genomes with members in each family and paralogs
+#load pangenome matrix
+matrix <- list()
+for (i in 1:length(pangenomes)){
+  matrix[[i]]<- read.table(paste0("pangenomes/",pangenomes[i],"/matrix.csv"),sep=",",header=TRUE)
+  matrix[[i]] <- matrix[[i]][,c(4,6,match("GCF_000008125.1",names(matrix[[i]])))]
+  colnames(matrix[[i]])[3] <- "gene"
+  #HB27_annotated <- merge(HB27_annotated,matrix[[i]], by="gene",all.x=TRUE)
+  
+  for (j in 1:nrow(HB27_annotated)){
+    k <- grep(HB27_annotated$gene[j],matrix[[i]]$gene)
+    HB27_annotated$isolates[j] <- matrix[[i]]$No..isolates[k] 
+    HB27_annotated$seqs[j] <- matrix[[i]]$Avg.sequences.per.isolate[k] 
+  }
+  colnames(HB27_annotated)[c(length(HB27_annotated)-1,length(HB27_annotated))] <- c(paste0(pangenomes[i],"_isolates"),paste0(pangenomes[i],"_seqs.per.isolate"))
+}
+
+#final-final table
+panTnseq <- merge(tnseq,HB27_annotated[,c(11,5:8,12:19)])
+panTnseq_Full <-  merge(tnseq,HB27_annotated[,c(11,5:8,12:19)],by="Genes",all.x=TRUE)
+#reorder columns and save
+setcolorder(panTnseq_Full,"cluster",before ="Ppol_1")
+
+fwrite(panTnseq_Full,"tnseq_pangenome_12nov2024.csv",sep=";", row.names = FALSE)
+writexl::write_xlsx(panTnseq_Full,"tnseq_pangenome_12nov2024.xlsx")
+
+```
+
+We have been able to match in the pangenome 2190 genes out of 2275, with only 3 genes of the newly annotated HB27 (GCF_000008125.1_07995, GCF_000008125.1_08920, and GCF_000008125.1_08925) that matched with two genes in the classical annotation (TT_CXXXX).
+
+The final table is saved as [tnseq_pangenome_12nov2024.xlsx](tnseq_pangenome_12nov2024.xlsx)
+
+## Correlation between TnSeq and Pangenome
+
+```{r corrplot1,echo=FALSE,eval=FALSE, fig.cap=capFig("Correlation between TnSeq and Pangenome variables.")}
+
+#corr
+panTnseq_Full$cluster2 <- as.numeric(as.factor(panTnseq_Full$cluster))
+
+panTnseq_Full[,c(12:17,22:29)] <- lapply(panTnseq_Full[,c(12:17,22:29)], as.numeric)
+M <-cor(panTnseq_Full[,c(12:16,22,24,26,28)], method = "spearman", use = "pairwise.complete.obs")
+testRes <-  cor.mtest(panTnseq_Full[,c(12:16,22,24,26,28)], conf.level = 0.95)
+corrplot(M, type="lower", p.mat = testRes$p, method = 'circle', insig='blank',
+         tl.col="black",tl.srt = 45, addCoef.col ='black', number.cex = 0.5,tl.cex=0.5, col=brewer.pal(n=8, name="Spectral"))
+
+```
+
+There's no overall correlation between the TnSeq group classification of the HB27 genes, with the number of conserved genes in each pangenome and the pangenome cluster.
+
+```{r fig4b,fig.cap=capFig("Persistent (core) genes in each pangenome.")}
+
+
+#recuento
+
+high <- c()
+intermediate <- c()
+less <- c()
+for (i in 1:4){
+  high[i] <- nrow(subset(panTnseq,panTnseq[,17+i]=="persistent"  & panTnseq$cluster=="Highly Permissive" ))
+   intermediate[i] <- nrow(subset(panTnseq,panTnseq[,17+i]=="persistent" & panTnseq$cluster=="Intermediate" ))
+   less[i] <- nrow(subset(panTnseq,panTnseq[,17+i]=="persistent" & panTnseq$cluster=="Less Permissive" ))
+}
+stats <- data.frame(high,intermediate,less)
+row.names(stats) <- names(pangenomes)
+stats <- cbind(row.names(stats),stack(stats))
+names(stats) <- c("level","ratio","cluster")
+#plot
+ggplot(stats,aes(x=level, y=ratio,group=cluster)) + 
+    geom_bar(aes(fill=cluster),stat = "identity",position="fill",color="grey40", alpha=0.8) + ylab("Pangenome Persistent Genes  (%)")+ geom_text(aes(label=ratio),size=5, position = position_fill(vjust=0.5) , col = "black")+xlab("Pangenome level") +scale_y_continuous(labels = scales::percent) +theme_bw()+ theme(axis.text.x = element_text(angle = 45,vjust=1,hjust=1),text=element_text(face="bold"))+labs(fill="TnSeq gene group")+scale_fill_manual(labels=c("Highly permissive","Intermediate","Less Permissive"),values=c("#FF9966", "#619CFF" ,"#3366CC")) 
+ggsave("figS5b.pdf",width=5,height=5)
+```
+
+Now, let's see genes distribution in the different groups using Venn diagrams.
+
+```{r venn, fig.height=10,fig.width=10, fig.cap=capFig("Venn diagram of TnSeq genes categories and Persistant genes in each pangenome).")}
+x <- list(
+  Intermediate = panTnseq_Full$Genes[panTnseq_Full$cluster=="Intermediate"], 
+  Highly_permissive = panTnseq_Full$Genes[panTnseq_Full$cluster=="Highly Permissive"], 
+  Less_permissive = panTnseq_Full$Genes[panTnseq_Full$cluster=="Less Permissive"], 
+  Persistent = panTnseq_Full$Genes[panTnseq_Full$tt_i4c5=="persistent"]
+  )
+
+library(ggvenn)
+tt <- ggvenn(
+  x, 
+  fill_color = c("#EFC000FF","#0073C2FF","cornflowerblue", "#CD534CFF"),
+  stroke_size = 0.5, set_name_size = 4
+  ) + ggtitle("Thermus thermophilus") + theme(plot.title = element_text(hjust = 0.5))+
+   scale_x_continuous(expand = expansion(mult = c(0.15, 0.15)))
+
+x[[4]] <- panTnseq_Full$Genes[panTnseq_Full$thermus_i4c5=="persistent"]
+
+thermus <- ggvenn(
+  x, 
+  fill_color = c("#EFC000FF","#0073C2FF","cornflowerblue", "#CD534CFF"),
+  stroke_size = 0.5, set_name_size = 4
+  ) + ggtitle("Thermus") + theme(plot.title = element_text(hjust = 0.5))+
+   scale_x_continuous(expand = expansion(mult = c(0.15, 0.15)))
+
+x[[4]] <- panTnseq_Full$Genes[panTnseq_Full$thermaceae_i4c5=="persistent"]
+
+thermaceae <- ggvenn(
+  x, 
+  fill_color = c("#EFC000FF","#0073C2FF","cornflowerblue", "#CD534CFF"),
+  stroke_size = 0.5, set_name_size = 4
+  ) + ggtitle("Thermaceae") + theme(plot.title = element_text(hjust = 0.5))+
+   scale_x_continuous(expand = expansion(mult = c(0.15, 0.15)))
+
+x[[4]] <- panTnseq_Full$Genes[panTnseq_Full$deinococcota_i4c5=="persistent"]
+
+deinococcota <- ggvenn(
+  x, 
+  fill_color = c("#EFC000FF","#0073C2FF","cornflowerblue", "#CD534CFF"),
+  stroke_size = 0.5, set_name_size = 4
+  ) + ggtitle("Deinococcota") + theme(plot.title = element_text(hjust = 0.5))+
+   scale_x_continuous(expand = expansion(mult = c(0.15, 0.15)))
+
+ggarrange(tt, thermus, thermaceae, deinococcota, 
+          labels = c("A", "B","C","D"), ncol=2,nrow = 2)
+       
+
+
+```
+Venn Diagrams
+
+```{r venn2}
+colorscale <- c("white","aquamarine","aquamarine1","aquamarine2","aquamarine3","aquamarine4")
+colorines <- c("cloud"="#bbe59f","shell"="#abc837","persistent"="#339933","Highly permissive"="#FF9966","Intermediate"="#619CFF" ,"Less permissive"= "#3366CC")
+panTnseq_Full[18:21] <- lapply(panTnseq_Full[18:21],factor, levels=c("cloud","shell","persistent"))
+library(ggVennDiagram)
+#t thermophilus
+Tnlist <- append(unstack(panTnseq_Full[,c(1,18)]),unstack(panTnseq_Full[,c(1,11)]))
+v1 <- ggVennDiagram(Tnlist,set_color=colorines,label="count",label_alpha=0,show_intersect = FALSE) +
+    scale_fill_gradientn(colours=colorscale)
+u1 <- ggVennDiagram(Tnlist,force_upset = TRUE,order.set.by = "none", order.intersect.by = "none")
+#thermus
+Tnlist <- append(unstack(panTnseq_Full[,c(1,19)]),unstack(panTnseq_Full[,c(1,11)]))
+v2 <- ggVennDiagram(Tnlist,set_color=colorines,label="count",label_alpha=0,show_intersect = FALSE)+
+         scale_fill_gradientn(colours=colorscale)
+u2 <- ggVennDiagram(Tnlist,force_upset = TRUE,order.set.by = "none", order.intersect.by = "none")
+#thermaceae
+Tnlist <- append(unstack(panTnseq_Full[,c(1,20)]),unstack(panTnseq_Full[,c(1,11)]))
+v3 <- ggVennDiagram(Tnlist,set_color=colorines,label="count",label_alpha=0,show_intersect = FALSE)+
+         scale_fill_gradientn(colours=colorscale)
+u3 <- ggVennDiagram(Tnlist,force_upset = TRUE,order.set.by = "none", order.intersect.by = "none")
+#deino
+Tnlist <- append(unstack(panTnseq_Full[,c(1,21)]),unstack(panTnseq_Full[,c(1,11)]))
+v4 <- ggVennDiagram(Tnlist,set_color=colorines,label="count",label_alpha=0,show_intersect = FALSE)+
+         scale_fill_gradientn(colours=colorscale)
+u4 <- ggVennDiagram(Tnlist,force_upset = TRUE,order.set.by = "none", order.intersect.by = "none")
+
+#ggarrange(u1+labs(title=expression(italic("T. thermophilus"))), v2+labs(title=expression(italic("Thermus"))), v3+labs(title=expression(italic("Thermaceae"))), v4+labs(title=expression(italic("Deinococcaceae"))), ncol=2,nrow=2,common.legend=TRUE,legend = "bottom")
+paste("T. thermophilus")
+u1
+paste("Thermus")
+u2
+paste("Thermaceae")
+u3
+paste("Deinococcota")
+u4
+ 
+
+
+```
+
+
+Now, let's try Euler diagrams.
+
+```{r euler, fig.height=10,fig.width=10, fig.cap=capFig("Venn diagram of TnSeq genes categories and Persistant genes in each pangenome).")}
+#svg("figure4c.svg")
+par(mfrow = c(2, 2),mar=c(1,1,1,1))
+
+#thermus termophilus
+Tnmat <- rbind(as.data.frame(as.list(panTnseq_Full[,c(1,11)]),col.names=c("Genes","group")),
+               as.data.frame(as.list(panTnseq_Full[,c(1,18)]),col.names=c("Genes","group")))
+plot(venneuler(na.omit(Tnmat)),col=c("#FF9966","#619CFF" , "#3366CC","#bbe59f","#abc837","#339933"),alpha=0.7,main=expression(italic("T. thermophilus")))
+
+#thermus
+Tnmat <- rbind(as.data.frame(as.list(panTnseq_Full[,c(1,11)]),col.names=c("Genes","group")),
+               as.data.frame(as.list(panTnseq_Full[,c(1,19)]),col.names=c("Genes","group")))
+plot(venneuler(na.omit(Tnmat)),col=c("#FF9966","#619CFF" , "#3366CC","#bbe59f","#abc837","#339933"),alpha=0.7,main=expression(italic("Thermus")))
+
+#termaceae
+Tnmat <- rbind(as.data.frame(as.list(panTnseq_Full[,c(1,11)]),col.names=c("Genes","group")),
+               as.data.frame(as.list(panTnseq_Full[,c(1,20)]),col.names=c("Genes","group")))
+plot(venneuler(na.omit(Tnmat)),col=c("#FF9966","#619CFF" , "#3366CC","#bbe59f","#abc837","#339933"),alpha=0.7,main=expression(italic("Thermaceae")))
+
+#deinococcota
+Tnmat <- rbind(as.data.frame(as.list(panTnseq_Full[,c(1,11)]),col.names=c("Genes","group")),
+               as.data.frame(as.list(panTnseq_Full[,c(1,20)]),col.names=c("Genes","group")))
+plot(venneuler(na.omit(Tnmat)),col=c("#FF9966","#619CFF" , "#3366CC","#bbe59f","#abc837","#339933"),alpha=0.7,main=expression(italic("Deinococcota")))
+
+
+dev.off()
+
+
+```
+
+## Enrichment analysis
+
+```{r enrichment_pan, fig.height=8, fig.cap=capFig("Significantly enriched KEGG Ontology groups made up of Intermediate/Less permissive genes within the Core genome (persistant genes) of Thermaceae (A) or Deinococcota (B).")}
+
+
+kk <- enrichKEGG(gene         = na.omit(panTnseq_Full[panTnseq_Full$cluster!="Highly Permissive"  & panTnseq_Full$thermaceae_i4c5=="persistent",1]),
+                 organism     = 'tth',
+                 pvalueCutoff = 0.05)
+p1 <- dotplot(kk, title="Thermaceae core genome")
+
+kk_D <- enrichKEGG(gene         = na.omit(panTnseq_Full[panTnseq_Full$cluster!="Highly Permissive"  & panTnseq_Full$deinococcota_i4c5=="persistent",1]),
+                 organism     = 'tth',
+                 pvalueCutoff = 0.05)
+p2 <- dotplot(kk_D, title="Deinococcota core genome")
+
+ggarrange(p1, p2, 
+          labels = c("A", "B"), ncol=1,nrow = 2, heights=c(1,1))
+       
+
+```
+
+```{r enrichment_uniprot, fig.height=10, fig.cap=capFig("Significantly enriched KEGG Ontology groups made up of Intermediate/Less permissive genes within the Core genome (persistant genes) of Thermus (A), Thermaceae (B) or Deinococcota (C).")}
+
+uniprot <- bitr_kegg(panTnseq_Full$Genes, fromType="kegg", toType='uniprot', organism='tth')
+panTnseq_Full <- panTnseq_Full %>%
+  mutate(uni = replace(Genes, Genes %in% uniprot$kegg, uniprot$uniprot))
+
+kk <- enrichKEGG(gene         = na.omit(panTnseq_Full[panTnseq_Full$cluster!="Highly Permissive"  & panTnseq_Full$thermus_i4c5=="persistent",30]),
+           organism     = 'tth', keyType = 'uniprot',
+           pvalueCutoff = 0.05)
+if (is.null(kk)){
+  p1 <- NULL
+} else {
+  if (any(kk@result$p.adjust<0.05)){
+  p1 <- dotplot(kk, title="Thermus core genome")
+  } else {
+    p1 <- NULL
+  }
+}
+
+kk_t <- enrichKEGG(gene         = na.omit(panTnseq_Full[panTnseq_Full$cluster!="Highly Permissive"  & panTnseq_Full$thermaceae_i4c5=="persistent",30]),
+           organism     = 'tth', keyType = 'uniprot',
+           pvalueCutoff = 0.05)
+if (is.null(kk_t)){
+  p2 <- NULL
+} else {
+  if (any(kk@result$p.adjust<0.05)){
+  p2 <- dotplot(kk_t, title="Thermaceae core genome")
+  } else {
+    p2 <- NULL
+  }
+}
+
+kk_D <- enrichKEGG(gene         = na.omit(panTnseq_Full[panTnseq_Full$cluster!="Highly Permissive"  & panTnseq_Full$deinococcota_i4c5=="persistent",30]),
+           organism     = 'tth', keyType = 'uniprot',
+           pvalueCutoff = 0.05)
+if (is.null(kk_D)){
+  p3 <- NULL
+} else {
+  if (any(kk@result$p.adjust<0.05)){
+  p3 <- dotplot(kk_D, title="Deinococcota core genome")
+  } else {
+    p3 <- NULL
+  }
+}
+
+ggarrange(p1, p2, p3,
+          labels = c("A", "B", "C"), ncol=1,nrow = 3,heights=c(2,3,3))
+  
+```
+
+# Compare with other species
+
+## Data from Zhang2018
+
+Since there is no clear correlation between gene conservation and the permittivity of Tn5 insertions, we decided to compare our results with previously published results. We used the data from @zhang2018 (SUPPLEMENTARY DATA 4), which includes the essential/non-essential genes of a wide range of prokaryotic organisms comprising extremophilic archaea (*Sulfolobus islandicus* and *Methanococcus maripaludis*) and various mesophilic bacteria (*Bacillus subtilis*, *Bacteroides fragilis*, *Escherichia coli*) as well as the minimal essential genome of *Micoplasma JVCI Syn3.0*.
+
+The following table contains the essential genes in all prokaryotic genomes and their HB27 orthologs as annotated by eggNOG. As you can see, out of 52 genes annotated as essentia in all thouse prokaryotic organisms, 6 were Highly Permissive and 40 (80%) Intermediate in HB27 TnSeq, but they are again highly conserved as all of them are persistent genes in the *T. thermophilus* pangenome and near 95% are still members of the core genome of *Deinococcota* pangenome.
+
+```{r zhang}
+#data from https://www.nature.com/articles/s41467-018-07379-4
+essentiality <- read_xlsx("bacteria_essential_genes/41467_2018_7379_MOESM6_ESM.xlsx",sheet=1)
+colnames(essentiality)[2] <- "eggNOG_OGs"
+world_essential <- merge(panTnseq_Full,essentiality,by="eggNOG_OGs")
+#names(world_essential)
+ prok <- subset(world_essential,world_essential[,35]=="essential" & world_essential[,36]=="essential" & world_essential[,39]=="essential" & world_essential[,40]=="essential" & world_essential[,41]=="essential" & world_essential[,42]=="essential")
+ 
+datatable(prok[,c(1,2,11,18:21)],rownames = FALSE,  escape = FALSE, filter="top", extensions = 'Responsive',options = list( pageLength = 25, autoWidth = TRUE ))
+#table to save
+#kbl(prok[,c(1,22,23,30:33)], align = "c", row.names = FALSE,col.names= c("eggNOG","Description","TnSeq","T. thermophilus","Thermus","Thermaceae","Deinococcota"), caption = "Table 2. Tth TnSeq and Pangenome analysis of selected prokaryotic essential genes from diverse previous works. See Methods for details.") %>%
+ #   kable_styling(bootstrap_options = "condensed", full_width = F, position = "center") %>%
+  #  column_spec(1, bold = T, italic=F) %>% save_kable("table2.pdf",self_contained=TRUE)
+```
+
+## Based on Rancati et al. ([PMID 29033457](https://pubmed.ncbi.nlm.nih.gov/29033457/), Supp. Table S1)
+
+We also downloaded the data from the papers indicated below and parsed the essential genes. To unify nomenclature, we tried to obtain the EggNOG COG code for each gene and used it to merge genes with different names across the different species. All data was parsed with an external [R script](scripts/essentials.R) to generate a common table ([all_essentials.csv](bacteria_essential_genes/all_essentials.csv)).
+
+| Strain                           | Ref. PMID                                                         | Assembly        | FileName                        |
+|---------------|----------------------------|---------------|---------------|
+| E. coli K12                      | [29463657](https://pubmed.ncbi.nlm.nih.gov/29463657/)             | GCF_000800765.1 | mbo001183726st1.xlsx            |
+| M. tuberculosis H37Rv            | [28096490](https://pubmed.ncbi.nlm.nih.gov/28096490/)             | GCF_000195955.2 | mbo002173137st3.xlsx            |
+| M. genitalum G37                 | [16407165](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1324956/) | GCA_000027325.1 | pnas_0510013103_10013Table2.xls |
+| P. aerugionsa PAO1               | [25848053](https://pubmed.ncbi.nlm.nih.gov/25848053/)             | GCF_000006765.1 | pnas.1422186112.sd01.xlsx       |
+| S. aureus HG003                  | [25888466](https://pubmed.ncbi.nlm.nih.gov/25888466/)             | GCF_000013425.1 | 12864_2015_1361_MOESM2_ESM.xlsx |
+| S. pyogenes (5448 & NZ131)       | [25996237](https://pubmed.ncbi.nlm.nih.gov/25996237/)             | GCA_000011765.2 | srep09838-s1.pdf (Table S3!)    |
+| Synechococcus elongatus PCC 7942 | [26508635](https://pubmed.ncbi.nlm.nih.gov/26508635/)             | GCF_000012525.1 | pnas.1519220112.sd03.xlsx       |
+
+First, we evaluate the correlation between the essential/indispensable genes with our HB27 TnSeq and pangenome data. As shown below, despite the fact that the bacterial data come from different sources, we see some negative correlation between the number of genomes with essential and dispensable genes. In addition, there is also a moderate positive correlation between gene essentiality and conservation in our pangenome. **However, consistent with previous results, the TnSeq results do not correlate with other analyses**, suggesting that *T. thermophilus* is reluctant to reveal its essential genes.
+
+```{r world, fig.cap=capFig("Correlation between esentiality results in diverse bacteria, the HB27 TnSeq and Pangenome variables. Significant (p<0.05) spearman r² are shown.")}
+
+#data from https://www.nature.com/articles/s41467-018-07379-4
+
+essential_mix <- read.csv2("bacteria_essential_genes/all_essentials.csv")
+world_essential <- merge(world_essential,essential_mix,by="eggNOG_OGs")
+fwrite(world_essential,"bacteria_essential_genes/all_essentials_panTnseq_18nov.csv", sep=";")
+
+
+#correlations
+world_essential$TnSeq <- as.numeric(factor(world_essential$cluster, levels=c("Less Permissive","Intermediate","Highly Permissive")))
+world_essential[,c(35:53)] <- lapply(world_essential[,c(35:53)], as.factor)
+world_essential[,c(12,13,14,15,18,19,20,21,35:53)] <- lapply(world_essential[,c(12,13,14,15,18,19,20,21,35:53)], as.numeric)
+M <-cor(world_essential[,c(12,13,14,15,18,19,20,21,53,54)], method = "spearman", use = "pairwise.complete.obs")
+testRes <-  cor.mtest(world_essential[,c(12,13,14,15,18,19,20,21,53,54)], conf.level = 0.99,method = "spearman", na.action="omit")
+corrplot(M, type="lower", p.mat=testRes$p, method = 'circle', insig='blank',
+         tl.col="black",tl.srt = 45, addCoef.col ='black', number.cex = 0.6,tl.cex=0.5, col=brewer.pal(n=8, name="Spectral"))
+
+#table
+#datatable(world_essential[,c(16,28,11,12,21,29:32)],rownames = FALSE,  escape = FALSE, filter="top", extensions = 'Responsive',options = list( pageLength = 25, autoWidth = TRUE ))
+
+
+```
+
+The detailed table of bacteria essential genes and HB27 TnSeq+Pangenome data can be found in file [all_essentials_panTnseq.csv](bacteria_essential_genes/all_essentials_panTnseq.csv).
+
+This can be also easily shown if we plot the number of genomes with essential genes by the TnSeq group of those genes.
+
+```{r fig.cap=capFig("Ratio (%) of genes in each TnSeq group by the number of genomes with essential genes. The number of genes in each group is indicated")}
+
+
+ggplot(as.data.frame(table(world_essential$essential,world_essential$cluster)),aes(x=Var1, y=Freq,group=Var2)) + 
+         geom_bar(aes(fill=Var2),stat = "identity",position="fill",color="grey40", alpha=0.8) +  geom_text(aes(label=Freq),size=4, position = position_fill(vjust=0.5) , col = "black")+ xlab("Number genomes with each essential gene") + ylab("TnSeq group (%)") +scale_y_continuous(labels = scales::percent) + theme_bw()+ labs(fill = "TnSeq group")
+```
+
+<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+
+*Click for Session Information*
+
+</button>
+
+<div id="collapseOne" class="accordion-collapse collapse">
+
+<div>
+
+```{r}
+sessionInfo()
+```
