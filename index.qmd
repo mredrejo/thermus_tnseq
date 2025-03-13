@@ -1,0 +1,44 @@
+---
+title: "Thermus thermophilus TnSeq"
+author: 
+  - name: Modesto
+    affiliation: Department of Biochemistry, UAM
+    affiliation_url: https://www.uam.es/
+date: "April 26, 2024"
+date-modified: "`r format(Sys.time(), '%Y-%m-%d (%H:%M h)')`"
+format: 
+  html:
+    page-layout: full
+toc: true
+toc-location: left
+toc-depth: 2
+number-sections: true
+number-depth: 1
+code-overflow: wrap
+link-external-icon: true
+link-external-newwindow: true 
+editor: visual
+bibliography: references.bib
+---
+
+## Contents
+
+This site contains the data, scripts and results of a TnSeq experiment performed in *Thermus thermophilus HB27* in the laboratory of [Mario Mencía](mailto:mmencia@cbm.csic.es) & José Berenguer (CBMSO, UAM-CSIC). This analysis was performed by Modesto Redrejo Rodríguez (Biochemistry Department, UAM).
+
+In this study we develop a procedure for thermostable selection of random insertion mutants based on a gene cassette encoding a thermostable resistance to kanamycin flanked by the recognition sites (ME sites) for Tn5 transposase @kia2017. The transposition library generated *in vitro* was initialy transformed in a PrimPol mutant HB27 derivative (*ppol*), which shows \~2 log fold transformation efficiency @garcía-quintans2020. This allowed the generation of the generation of a large library of insertion mutants (“Mother”), which was later transferred to a wild type HB27 strain (“Daughter”). Both libraries were sequenced straightforward and after several culture passages.
+
+## Funding
+
+This work was supported by grant number PID2019-109073RB-I00 from the Spanish Research Agency (AEI, Spanish Ministry of Science and Innovation).
+
+MRR lab is funded by grant PID2021-123403NB-I00 from the Spanish Research Agency (AEI, Spanish Ministry of Science and Innovation (MCIN/AEI/10.13039/501100011033/FEDER, A way to make Europe).
+
+```{r eval=TRUE, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+paquetes <- c("knitr","formatR","ggplot2","data.table","randomcoloR","DT","treemapify","shadowtext", "dplyr","tidyverse","patchwork","webr")
+unavailable <- setdiff(paquetes, rownames(installed.packages()))
+install.packages(unavailable)
+lapply(paquetes, library, character.only = TRUE)
+
+```

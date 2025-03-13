@@ -150,7 +150,7 @@ ggarrange(wss, si, pam,k,
 
 Now, we will compare all the clustering methods, DBSCAN and K-means and PAM with two clusters. We will select the method that yield a higher average silhouette value.
 
-```{r hotspot, fig.width=8, fig.height=8, fig.cap=capFig("Comparison of clustering method. Cluster results and silhouette plots for DBSCAN (A), K-Means (B) and PAM (C) clustering method are shown.")}
+```{r clustering2, fig.width=8, fig.height=8, fig.cap=capFig("Comparison of clustering method. Cluster results and silhouette plots for DBSCAN (A), K-Means (B) and PAM (C) clustering method are shown.")}
 #DBSCAN silhouette
 sil.dbscan <- silhouette(cl$cluster, dist(scores[,c(2:5)]))
 s1 <- fviz_cluster(object = cl, data = scores[,c(2:5)], ellipse.type = "t",labelsize = 0,
@@ -195,7 +195,7 @@ ggarrange(s1,s2,k1, k2, p1,p2,
 
 The Kmeans clustering is slightly better as its clusters area are closer to the silhouette mean, thus we will keep this clusters and name them as **"Highly Permissive"** and **"Intermediate"** genes. As shown in the following plot, both groups are well separated.
 
-```{r fig.cap=capFig("Density plot of genes by cluster in each sample.")}
+```{r densityclusters, fig.cap=capFig("Density plot of genes by cluster in each sample.")}
 #full table
 #subset the ~10% genes with less insertions
 datos.j = cbind(scores, cluster= kmclust2$cluster)
@@ -207,9 +207,9 @@ ggplot(data=cbind(datos.j$cluster,stack(datos.j[,2:5]))) +xlab("Z-Score (log2)")
     theme_classic() + facet_grid(~ind)  +labs(fill="Cluster",color="Cluster")
 ```
 
-The first group contains the genes with higher Z-score mean and the second large group contains the genes with less insertions. To highlight the top genes with less insertions, we empirically select the top 20% genes with less insertions as **"Less Permissive"** genes, corresponding to 453 genes with a Z-score \< -0.6. This subset is an artificial creation within the “Intermediate” cluster, not distinctly separate from it (Figure 16), but useful for data representation and discussion.
+The first group contains the genes with higher Z-score mean and the second large group contains the genes with less insertions. To highlight the top genes with less insertions, we empirically select the top 20% genes with less insertions as **"Less Permissive"** genes, corresponding to `r nrow(datos.j[datos.j$cluster=="Less Permissive",])` genes with a Z-score \< -0.6. This subset is an artificial creation within the “Intermediate” cluster, not distinctly separate from it (Figure 16), but useful for data representation and discussion.
 
-```{r , fig.cap=capFig("Density plot of genes by cluster in each sample including the Less Permissive group")}
+```{r 3groups, fig.cap=capFig("Density plot of genes by cluster in each sample including the Less Permissive group")}
 
 
 #top 20% of genes with lower z-score
@@ -519,8 +519,8 @@ As an example, you can see some of the HB27 RNA transcrition & translation and D
 ## Enrichment analysis
 ```{r enrichment_pan, eval=TRUE,error=FALSE, fig.height=8, fig.cap=capFig("Significantly enriched KEGG Ontology groups made up of Less Permissive genes by KEGG ontology groups (A) or KEGG modules (B).")}
 
-tt <- search_kegg_organism('Thermus thermophilus', by='scientific_name')
-kk <- enrichKEGG(gene         = datos.j[datos.j$cluster=="Highly Permissive",1],
+
+kk <- enrichKEGG(gene         = datos.j[datos.j$cluster=="Less Permissive",1],
                  organism     = 'tth',
                  pvalueCutoff = 0.05)
 if (sum(kk@result$p.adjust<0.05)!=0){

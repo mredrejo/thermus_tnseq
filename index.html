@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.56">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -56,10 +56,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-c03e8516d15b9dc0c6c719a1d8dccef1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/iconify-1.0.0-beta.2/iconify-icon.min.js"></script>
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
@@ -193,7 +193,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">September 4, 2024</p>
+      <p class="date-modified">March 14, 2025</p>
     </div>
   </div>
     
@@ -207,7 +207,7 @@ div.csl-indent {
 <section id="contents" class="level2">
 <h2 class="anchored" data-anchor-id="contents">Contents</h2>
 <p>This site contains the data, scripts and results of a TnSeq experiment performed in <em>Thermus thermophilus HB27</em> in the laboratory of <a href="mailto:mmencia@cbm.csic.es">Mario Mencía</a> &amp; José Berenguer (CBMSO, UAM-CSIC). This analysis was performed by Modesto Redrejo Rodríguez (Biochemistry Department, UAM).</p>
-<p>In this study we develop a procedure for thermostable selection of random insertion mutants based on a gene cassette encoding a thermostable resistance to kanamycin flanked by the recognition sites (ME sites) for Tn5 transposase <span class="citation" data-cites="kia2017">Kia et al. (<a href="#ref-kia2017" role="doc-biblioref">2017</a>)</span>. The transposition library generated <em>in vitro</em> was initialy transformed in a PrimPol mutant Hb27 dericative (<em>ppol</em>), which shows 2-3 log fold transformation efficiency <span class="citation" data-cites="garcía-quintans2020">García-Quintans et al. (<a href="#ref-garcía-quintans2020" role="doc-biblioref">2020</a>)</span>. This allowed the generation of the generation of a large library of insertion mutants (“Mother”), which was later transferred to a wild type HB27 strain (“Daughter”). Both libraries were sequenced straightforward and after several culture passages.</p>
+<p>In this study we develop a procedure for thermostable selection of random insertion mutants based on a gene cassette encoding a thermostable resistance to kanamycin flanked by the recognition sites (ME sites) for Tn5 transposase <span class="citation" data-cites="kia2017">Kia et al. (<a href="#ref-kia2017" role="doc-biblioref">2017</a>)</span>. The transposition library generated <em>in vitro</em> was initialy transformed in a PrimPol mutant HB27 derivative (<em>ppol</em>), which shows ~2 log fold transformation efficiency <span class="citation" data-cites="garcía-quintans2020">García-Quintans et al. (<a href="#ref-garcía-quintans2020" role="doc-biblioref">2020</a>)</span>. This allowed the generation of the generation of a large library of insertion mutants (“Mother”), which was later transferred to a wild type HB27 strain (“Daughter”). Both libraries were sequenced straightforward and after several culture passages.</p>
 </section>
 <section id="funding" class="level2">
 <h2 class="anchored" data-anchor-id="funding">Funding</h2>
@@ -308,8 +308,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -427,7 +425,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
