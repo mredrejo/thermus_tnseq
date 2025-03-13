@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.56">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Modesto">
+<meta name="dcterms.date" content="2024-04-26">
+
+<title>Thermus Pangenome – Thermus TnSeq</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/iconify-1.0.0-beta.2/iconify-icon.min.js"></script>
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<link href="site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="site_libs/datatables-binding-0.33/datatables.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="site_libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="site_libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="site_libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+<link href="site_libs/dt-ext-responsive-1.13.6/css/responsive.dataTables.min.css" rel="stylesheet">
+<script src="site_libs/dt-ext-responsive-1.13.6/js/dataTables.responsive.min.js"></script>
+<link href="site_libs/nouislider-7.0.10/jquery.nouislider.min.css" rel="stylesheet">
+<script src="site_libs/nouislider-7.0.10/jquery.nouislider.min.js"></script>
+<link href="site_libs/selectize-0.12.0/selectize.bootstrap3.css" rel="stylesheet">
+<script src="site_libs/selectize-0.12.0/selectize.min.js"></script>
+<link href="site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+<script src="site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Thermus TnSeq</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-contents" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Contents</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-contents">    
+        <li>
+    <a class="dropdown-item" href="./reads_dd_processing.html">
+ <span class="dropdown-text">TnSeq Illumina Data Processing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./genes_classification_dd.html">
+ <span class="dropdown-text">TnSeq Genes classification</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./panthermus_dd.html">
+ <span class="dropdown-text">Thermus Pangenome</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/mredrejo/thermus_tnseq" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#genomes-dataset-and-pangenome-construction" id="toc-genomes-dataset-and-pangenome-construction" class="nav-link active" data-scroll-target="#genomes-dataset-and-pangenome-construction"><span class="header-section-number">1</span> Genomes dataset and pangenome construction</a></li>
+  <li><a href="#pangenomes-stats" id="toc-pangenomes-stats" class="nav-link" data-scroll-target="#pangenomes-stats"><span class="header-section-number">2</span> Pangenomes stats</a></li>
+  <li><a href="#integration-of-tnseq-and-pangenomes" id="toc-integration-of-tnseq-and-pangenomes" class="nav-link" data-scroll-target="#integration-of-tnseq-and-pangenomes"><span class="header-section-number">3</span> Integration of TnSeq and pangenomes</a>
+  <ul class="collapse">
+  <li><a href="#correlation-between-tnseq-and-pangenome" id="toc-correlation-between-tnseq-and-pangenome" class="nav-link" data-scroll-target="#correlation-between-tnseq-and-pangenome">Correlation between TnSeq and Pangenome</a></li>
+  <li><a href="#enrichment-analysis" id="toc-enrichment-analysis" class="nav-link" data-scroll-target="#enrichment-analysis">Enrichment analysis</a></li>
+  </ul></li>
+  <li><a href="#compare-with-other-species" id="toc-compare-with-other-species" class="nav-link" data-scroll-target="#compare-with-other-species"><span class="header-section-number">4</span> Compare with other species</a>
+  <ul class="collapse">
+  <li><a href="#data-from-zhang2018" id="toc-data-from-zhang2018" class="nav-link" data-scroll-target="#data-from-zhang2018">Data from Zhang2018</a></li>
+  <li><a href="#based-on-rancati-et-al.-pmid-29033457-supp.-table-s1" id="toc-based-on-rancati-et-al.-pmid-29033457-supp.-table-s1" class="nav-link" data-scroll-target="#based-on-rancati-et-al.-pmid-29033457-supp.-table-s1">Based on Rancati et al.&nbsp;(PMID 29033457, Supp. Table S1)</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content column-page-right" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Thermus Pangenome</h1>
+</div>
+
+
+<div class="quarto-title-meta-author column-page-right">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Modesto </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Department of Biochemistry, UAM
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta column-page-right">
+
+      
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">April 26, 2024</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">February 25, 2025</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="genomes-dataset-and-pangenome-construction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Genomes dataset and pangenome construction</h1>
+<p>We downloaded (May 27th, 2024) all the Phylum <em>Deinococcota</em> assemblies from Refseq database using the NCBI tool <code>datasets</code> (v.16.5.0) installed in Conda.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate ncbi_datasets</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> update <span class="at">-c</span> conda-forge ncbi-datasets-cli</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> thermaceae/thermus_refseq</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">datasets</span> download genome taxon Thermaceae <span class="at">--filename</span> thermaceae_dataset.zip <span class="at">--exclude-atypical</span> <span class="at">--assembly-source</span> <span class="st">'refseq'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>To obtain an index of the genome files, we converted the <code>dataset_catalog.json</code> to CSV (<a href="https://www.convertcsv.com/json-to-csv.htm" class="uri">https://www.convertcsv.com/json-to-csv.htm</a>) to obtain the file <a href="thermaceae/thermaceae_dataset/fasta.csv">fasta.csv</a>.</p>
+<p>To work with homogeneous and updated genome annotations, we subsequently re-annotated all genome assemblies with <code>Bakta</code> (from Conda, v. 1.9.2) using the full database (DDBB v. 5.1) and the options <code>--skip-crispr --force</code>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> pangenomes/deinococcota/ncbi_dataset/data</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate bakta</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> update bakta</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">bakta_db</span> download <span class="at">--output</span> /Volumes/Trastero4/ddbb <span class="at">--type</span> full </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#database is in external HD</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="va">IFS</span><span class="op">=</span>, <span class="bu">read</span> <span class="at">-r</span> <span class="va">col1</span> <span class="va">col2</span> <span class="va">col3</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">do</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="ex">bakta</span> <span class="at">--db</span> /Volumes/Trastero4/ddbb/bakta-db <span class="at">--verbose</span> <span class="at">--output</span> ../../../bakta_results/<span class="va">$col3</span> <span class="at">--prefix</span> <span class="va">$col3</span> <span class="at">--locus-tag</span> <span class="va">$col3</span> <span class="at">--threads</span> 16 <span class="va">$col1</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">done</span> <span class="op">&lt;</span> <span class="op">&lt;(</span><span class="fu">tail</span> <span class="at">-n</span> +2 fasta.csv<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The pangenomes were constructed with <code>PPanGGOLIN</code> (v. 2.0.5) installed in Conda. You can see the whole documentation about PPanGGOLIN and the output files <a href="https://ppanggolin.readthedocs.io/en/latest/index.html">here</a>. In order to construct different pangenomes at species, genus, family and order levels, we parse the taxonomy from NCBI datasets using <a href="https://www.ncbi.nlm.nih.gov/datasets/docs/v2/reference-docs/command-line/dataformat/"><code>dataformat</code></a> tool and then use a short R script (<a href="scripts/parse_taxonomy.R"><code>parse_taxonomy.R</code></a>) to generate the annotated genomes table lists.</p>
+<p>After testing different alternative datasets and clustering combinations, we empirically set the MMSeqs clustering sequence identity and coverage parameters to 0.4 and 0.5, respectively.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#STEP 2</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Run ppanggolin and write extra output files</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate bioconda</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> pangenomes</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ppanggolin</span> workflow <span class="at">--anno</span> deinococcota.gbff.list <span class="at">--basename</span> deinococcota <span class="at">--identity</span> 0.4 <span class="at">--coverage</span> 0.5 <span class="at">-o</span> deinococcota_i4c5 <span class="at">-c</span> 16 <span class="at">-f</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">ppanggolin</span> workflow <span class="at">--anno</span> thermaceae.gbff.list <span class="at">--basename</span> thermaceae <span class="at">--identity</span> 0.4 <span class="at">--coverage</span> 0.5 <span class="at">-o</span> thermaceae_i4c5 <span class="at">-c</span> 16 <span class="at">-f</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="ex">ppanggolin</span> workflow <span class="at">--anno</span> thermus.gbff.list <span class="at">--basename</span> thermus <span class="at">--identity</span> 0.4 <span class="at">--coverage</span> 0.5 <span class="at">-o</span> thermus_i4c5 <span class="at">-c</span> 16 <span class="at">-f</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ex">ppanggolin</span> workflow <span class="at">--anno</span> tt.gbff.list <span class="at">--basename</span> tthermophilus <span class="at">--identity</span> 0.4 <span class="at">--coverage</span> 0.5 <span class="at">-o</span> tt_i4c5 <span class="at">-c</span> 16 <span class="at">-f</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Additionally, before moving forward with the pangenome, as reference, we are going to incorporate the gene names from the <em>Thermus</em> <em>thermophilus</em> strain HB27, as annotated in the NCBI Refseq assembly (<a href="#0">GCF_000008125.1</a>).</p>
+</section>
+<section id="pangenomes-stats" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Pangenomes stats</h1>
+<p>Now, we are going to have a look to the main pangenome stats.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pangenomes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"tt_i4c5"</span>,<span class="st">"thermus_i4c5"</span>,<span class="st">"thermaceae_i4c5"</span>,<span class="st">"deinococcota_i4c5"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pangenomes) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Thermus thermophilus"</span>,<span class="st">"Thermus"</span>,<span class="st">"Thermaceae"</span>,<span class="st">"Deinococcota"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#stats from all metagenomes</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>cloud <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>shell <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>persistent <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(pangenomes)){</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  cloud[i] <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">read_lines</span>(<span class="fu">paste0</span>(<span class="st">"pangenomes/"</span>,pangenomes[i],<span class="st">"/partitions/cloud.txt"</span>)))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  shell[i] <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">read_lines</span>(<span class="fu">paste0</span>(<span class="st">"pangenomes/"</span>,pangenomes[i],<span class="st">"/partitions/shell.txt"</span>)))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  persistent[i] <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">read_lines</span>(<span class="fu">paste0</span>(<span class="st">"pangenomes/"</span>,pangenomes[i],<span class="st">"/partitions/persistent.txt"</span>)))</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(cloud,shell,persistent)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(stats) <span class="ot">&lt;-</span> <span class="fu">names</span>(pangenomes)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">row.names</span>(stats),<span class="fu">stack</span>(stats))</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(stats) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"level"</span>,<span class="st">"numbers"</span>,<span class="st">"partition"</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#plot</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(stats,<span class="fu">aes</span>(<span class="at">x=</span>level, <span class="at">y=</span>numbers,<span class="at">group=</span>partition)) <span class="sc">+</span> </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>         <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">fill=</span>partition),<span class="at">stat =</span> <span class="st">"identity"</span>,<span class="at">position=</span><span class="st">"fill"</span>,<span class="at">color=</span><span class="st">"grey40"</span>, <span class="at">alpha=</span><span class="fl">0.8</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Gene families (%)"</span>)<span class="sc">+</span> <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span>numbers),<span class="at">size=</span><span class="dv">5</span>, <span class="at">position =</span> <span class="fu">position_fill</span>(<span class="at">vjust=</span><span class="fl">0.5</span>) , <span class="at">col =</span> <span class="st">"black"</span>)<span class="sc">+</span><span class="fu">xlab</span>(<span class="st">"Pangenome level"</span>) <span class="sc">+</span><span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span> <span class="fu">theme_bw</span>()<span class="sc">+</span><span class="fu">scale_fill_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"#bbe59f"</span>,<span class="st">"#abc837"</span>,<span class="st">"#339933"</span>) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/fig4a-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption><font size="2">Figure 23. Statistics of PPanGGOLIN pangenomes obtained with 40% identity and 50% coverage. The number of gene families in each partition is indicated</font></figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The number of clusters or gene families conserved (Shell+Persistent) increases as we go down in the taxonomical level. Note that the Shell partition shrinks at the species level, suggesting that the identity threshold is probably low at this level for a detailed pangenome analysis. However, as we will focus in the Persistent partition, the calculated pangenomes would be enough informative.</p>
+</section>
+<section id="integration-of-tnseq-and-pangenomes" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Integration of TnSeq and pangenomes</h1>
+<p>As mentioned above, in order to compute the pangenomes, we carried out a new annotation of the genes in all the assemblies. This is required to have homogeneous gene definitions, but that also gives rise to some differences between the classical NCBI Genbank annotation that we used for the pangenome and the new annotations. Thus, in order to integrate the HB27 genes from TnSeq (TT_CXXXX) and pangenome genes (GCF_000008125.1_XXXXX) in the same table, we used the package <code>fuzzyjoin</code> that allows a flexible merge of the data, considering the gene start and stop as an interval rather than fixed coordinates. However, this flexibility also has a price, as we have some pangenome genes that matched with more than one gene in the classical annotation. We tested different levels of flexibility in the coordinates to maximize the number of genes in the table and at the same time minimize the number of duplicates.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#cross GCA_000008125.1 in all pangenomes</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>matrix <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>HB27 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(pangenomes)){</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  matrix[[i]]<span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="fu">paste0</span>(<span class="st">"pangenomes/"</span>,pangenomes[i],<span class="st">"/table/GCF_000008125.1.tsv"</span>),<span class="at">header=</span><span class="cn">TRUE</span>,<span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>HB27 <span class="ot">&lt;-</span> <span class="fu">merge</span>(matrix[[<span class="dv">1</span>]][,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">8</span>)],matrix[[<span class="dv">2</span>]][,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">8</span>)],<span class="at">by=</span><span class="fu">c</span>(<span class="st">"gene"</span>,<span class="st">"contig"</span>,<span class="st">"start"</span>,<span class="st">"stop"</span>),<span class="at">all=</span><span class="cn">TRUE</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(HB27)[<span class="dv">5</span><span class="sc">:</span><span class="dv">6</span>] <span class="ot">&lt;-</span> pangenomes[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>HB27 <span class="ot">&lt;-</span> <span class="fu">merge</span>(HB27,matrix[[<span class="dv">3</span>]][,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">8</span>)],<span class="at">by=</span><span class="fu">c</span>(<span class="st">"gene"</span>,<span class="st">"contig"</span>,<span class="st">"start"</span>,<span class="st">"stop"</span>),<span class="at">all=</span><span class="cn">TRUE</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>HB27 <span class="ot">&lt;-</span> <span class="fu">merge</span>(HB27,matrix[[<span class="dv">4</span>]][,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">8</span>)],<span class="at">by=</span><span class="fu">c</span>(<span class="st">"gene"</span>,<span class="st">"contig"</span>,<span class="st">"start"</span>,<span class="st">"stop"</span>),<span class="at">all=</span><span class="cn">TRUE</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(HB27)[<span class="dv">7</span><span class="sc">:</span><span class="dv">8</span>] <span class="ot">&lt;-</span> pangenomes[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#cross gene names </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>tnseq <span class="ot">&lt;-</span> <span class="fu">read.csv2</span>(<span class="st">"tnSeq_dd_full.csv"</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>HB27_genome <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"00_raw/refs/GCA_000008125.1.gtf"</span>,<span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>,<span class="at">header=</span><span class="cn">FALSE</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>HB27_genome<span class="sc">$</span>Chr <span class="ot">&lt;-</span> <span class="st">"AE017221.1"</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>HB27_genome<span class="sc">$</span>Chr[<span class="dv">8088</span><span class="sc">:</span><span class="fu">nrow</span>(HB27_genome)] <span class="ot">&lt;-</span> <span class="st">"AE017222.1"</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>HB27_genome<span class="sc">$</span>V9 <span class="ot">&lt;-</span>  <span class="fu">substr</span>(HB27_genome<span class="sc">$</span>V9,<span class="dv">9</span>,<span class="dv">16</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(HB27_genome)[<span class="fu">c</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">9</span>)] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"start"</span>,<span class="st">"stop"</span>,<span class="st">"Genes"</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#to reduce differnces in gene annotation, we use fuzzyjoin</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#we use the highest max_dist value that don't give rise to duplicate gene names </span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> fuzzyjoin<span class="sc">::</span><span class="fu">difference_inner_join</span>(HB27[HB27<span class="sc">$</span>contig<span class="sc">==</span><span class="st">"contig_1"</span>,],HB27_genome[HB27_genome<span class="sc">$</span>V3<span class="sc">==</span><span class="st">"CDS"</span> <span class="sc">&amp;</span> HB27_genome<span class="sc">$</span>V1<span class="sc">==</span><span class="st">"AE017221.1"</span> ,<span class="fu">c</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">9</span>)], <span class="at">by =</span><span class="fu">c</span>(<span class="st">"start"</span>, <span class="st">"stop"</span>), <span class="at">max_dist =</span> <span class="dv">210</span> )</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>tmp2 <span class="ot">&lt;-</span> fuzzyjoin<span class="sc">::</span><span class="fu">difference_inner_join</span>(HB27[HB27<span class="sc">$</span>contig<span class="sc">==</span><span class="st">"contig_2"</span>,],HB27_genome[HB27_genome<span class="sc">$</span>V3<span class="sc">==</span><span class="st">"CDS"</span> <span class="sc">&amp;</span> HB27_genome<span class="sc">$</span>V1<span class="sc">==</span><span class="st">"AE017222.1"</span> ,<span class="fu">c</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">9</span>)], <span class="at">by =</span><span class="fu">c</span>(<span class="st">"start"</span>, <span class="st">"stop"</span>), <span class="at">max_dist =</span> <span class="dv">210</span> )</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>HB27_annotated <span class="ot">&lt;-</span> <span class="fu">rbind</span>(tmp,tmp2)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#now we fetch the number of genomes with members in each family and paralogs</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#load pangenome matrix</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>matrix <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(pangenomes)){</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  matrix[[i]]<span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="fu">paste0</span>(<span class="st">"pangenomes/"</span>,pangenomes[i],<span class="st">"/matrix.csv"</span>),<span class="at">sep=</span><span class="st">","</span>,<span class="at">header=</span><span class="cn">TRUE</span>)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  matrix[[i]] <span class="ot">&lt;-</span> matrix[[i]][,<span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">6</span>,<span class="fu">match</span>(<span class="st">"GCF_000008125.1"</span>,<span class="fu">names</span>(matrix[[i]])))]</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(matrix[[i]])[<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="st">"gene"</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="co">#for (j in 1:nrow(HB27_annotated)){</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  k &lt;- grep(HB27_annotated$gene[j],matrix[[i]]$gene)</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  HB27_annotated$isolates[j] &lt;- matrix[[i]]$No..isolates[k] </span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  HB27_annotated$seqs[j] &lt;- matrix[[i]]$Avg.sequences.per.isolate[k] </span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="co">#}</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  HB27_annotated<span class="sc">$</span>isolates <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(HB27_annotated), <span class="cf">function</span>(j) {</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="fu">grep</span>(HB27_annotated<span class="sc">$</span>gene[j], matrix[[i]]<span class="sc">$</span>gene)</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>  matrix[[i]]<span class="sc">$</span>No..isolates[k]</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>  HB27_annotated<span class="sc">$</span>seqs <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(HB27_annotated), <span class="cf">function</span>(j) {</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="fu">grep</span>(HB27_annotated<span class="sc">$</span>gene[j], matrix[[i]]<span class="sc">$</span>gene)</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>  matrix[[i]]<span class="sc">$</span>Avg.sequences.per.isolate[k] </span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(HB27_annotated)[<span class="fu">c</span>(<span class="fu">length</span>(HB27_annotated)<span class="sc">-</span><span class="dv">1</span>,<span class="fu">length</span>(HB27_annotated))] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste0</span>(pangenomes[i],<span class="st">"_isolates"</span>),<span class="fu">paste0</span>(pangenomes[i],<span class="st">"_seqs.per.isolate"</span>))</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="co">#final-final table</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>panTnseq <span class="ot">&lt;-</span> <span class="fu">merge</span>(tnseq,HB27_annotated[,<span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">5</span><span class="sc">:</span><span class="dv">8</span>,<span class="dv">12</span><span class="sc">:</span><span class="dv">19</span>)])</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>panTnseq_Full <span class="ot">&lt;-</span>  <span class="fu">merge</span>(tnseq,HB27_annotated[,<span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">5</span><span class="sc">:</span><span class="dv">8</span>,<span class="dv">12</span><span class="sc">:</span><span class="dv">19</span>)],<span class="at">by=</span><span class="st">"Genes"</span>,<span class="at">all.x=</span><span class="cn">TRUE</span>)</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="co">#reorder columns and save</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="fu">setcolorder</span>(panTnseq_Full,<span class="st">"cluster"</span>,<span class="at">before =</span><span class="st">"Ppol_1"</span>)</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="co">#combine description fields</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>panTnseq_Full<span class="sc">$</span>Description.y[panTnseq_Full<span class="sc">$</span>Description.y<span class="sc">==</span><span class="st">"-"</span>] <span class="ot">&lt;-</span> panTnseq_Full<span class="sc">$</span>Description.x[panTnseq_Full<span class="sc">$</span>Description.y<span class="sc">==</span><span class="st">"-"</span>]</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="fu">setcolorder</span>(panTnseq_Full,<span class="st">"Description.y"</span>,<span class="at">before =</span><span class="st">"Description.x"</span>)</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>panTnseq_Full <span class="ot">&lt;-</span> panTnseq_Full[,<span class="sc">-</span><span class="dv">5</span>]</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(panTnseq_Full)[<span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="st">"Description"</span></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="co">#save</span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="fu">fwrite</span>(panTnseq_Full,<span class="st">"tnseq_pangenome_25feb2025.csv"</span>,<span class="at">sep=</span><span class="st">";"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(panTnseq_Full,<span class="st">"tnseq_pangenome_25feb2025.xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We have been able to match in the pangenome 2190 genes out of 2275, with only 3 genes of the newly annotated HB27 (GCF_000008125.1_07995, GCF_000008125.1_08920, and GCF_000008125.1_08925) that matched with two genes in the classical annotation (TT_CXXXX).</p>
+<p>The final table is saved as <a href="tnseq_pangenome_25feb2025.xlsx">tnseq_pangenome_25feb2025.xlsx</a></p>
+<section id="correlation-between-tnseq-and-pangenome" class="level2">
+<h2 class="anchored" data-anchor-id="correlation-between-tnseq-and-pangenome">Correlation between TnSeq and Pangenome</h2>
+<p>There’s no overall correlation between the TnSeq group classification of the HB27 genes, with the number of conserved genes in each pangenome and the pangenome cluster.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#recuento</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>high <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>intermediate <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>less <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>){</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  high[i] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(<span class="fu">subset</span>(panTnseq,panTnseq[,<span class="dv">16</span><span class="sc">+</span>i]<span class="sc">==</span><span class="st">"persistent"</span>  <span class="sc">&amp;</span> panTnseq<span class="sc">$</span>cluster<span class="sc">==</span><span class="st">"Highly Permissive"</span> ))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>   intermediate[i] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(<span class="fu">subset</span>(panTnseq,panTnseq[,<span class="dv">16</span><span class="sc">+</span>i]<span class="sc">==</span><span class="st">"persistent"</span> <span class="sc">&amp;</span> panTnseq<span class="sc">$</span>cluster<span class="sc">==</span><span class="st">"Intermediate"</span> ))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>   less[i] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(<span class="fu">subset</span>(panTnseq,panTnseq[,<span class="dv">16</span><span class="sc">+</span>i]<span class="sc">==</span><span class="st">"persistent"</span> <span class="sc">&amp;</span> panTnseq<span class="sc">$</span>cluster<span class="sc">==</span><span class="st">"Less Permissive"</span> ))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(high,intermediate,less)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(stats) <span class="ot">&lt;-</span> <span class="fu">names</span>(pangenomes)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">row.names</span>(stats),<span class="fu">stack</span>(stats))</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(stats) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"level"</span>,<span class="st">"ratio"</span>,<span class="st">"cluster"</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#plot</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(stats,<span class="fu">aes</span>(<span class="at">x=</span>level, <span class="at">y=</span>ratio,<span class="at">group=</span>cluster)) <span class="sc">+</span> </span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">fill=</span>cluster),<span class="at">stat =</span> <span class="st">"identity"</span>,<span class="at">position=</span><span class="st">"fill"</span>,<span class="at">color=</span><span class="st">"grey40"</span>, <span class="at">alpha=</span><span class="fl">0.8</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Pangenome Persistent Genes  (%)"</span>)<span class="sc">+</span> <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span>ratio),<span class="at">size=</span><span class="dv">5</span>, <span class="at">position =</span> <span class="fu">position_fill</span>(<span class="at">vjust=</span><span class="fl">0.5</span>) , <span class="at">col =</span> <span class="st">"black"</span>)<span class="sc">+</span><span class="fu">xlab</span>(<span class="st">"Pangenome level"</span>) <span class="sc">+</span><span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span><span class="fu">theme_bw</span>()<span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>,<span class="at">vjust=</span><span class="dv">1</span>,<span class="at">hjust=</span><span class="dv">1</span>),<span class="at">text=</span><span class="fu">element_text</span>(<span class="at">face=</span><span class="st">"bold"</span>))<span class="sc">+</span><span class="fu">labs</span>(<span class="at">fill=</span><span class="st">"TnSeq gene group"</span>)<span class="sc">+</span><span class="fu">scale_fill_manual</span>(<span class="at">labels=</span><span class="fu">c</span>(<span class="st">"Highly permissive"</span>,<span class="st">"Intermediate"</span>,<span class="st">"Less Permissive"</span>),<span class="at">values=</span><span class="fu">c</span>(<span class="st">"#FF9966"</span>, <span class="st">"#619CFF"</span> ,<span class="st">"#3366CC"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/fig4b-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption><font size="2">Figure 24. Persistent (core) genes in each pangenome.</font></figcaption>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"fig4b.pdf"</span>,<span class="at">width=</span><span class="dv">5</span>,<span class="at">height=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Now, let’s see genes distribution in the different groups using Venn diagrams.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>       x <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Intermediate =</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">==</span><span class="st">"Intermediate"</span>], </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Highly_permissive =</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">==</span><span class="st">"Highly Permissive"</span>], </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Less_permissive =</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">==</span><span class="st">"Less Permissive"</span>], </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Persistent =</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>tt_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggvenn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: grid</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tt <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#EFC000FF"</span>,<span class="st">"#0073C2FF"</span>,<span class="st">"cornflowerblue"</span>, <span class="st">"#CD534CFF"</span>),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Thermus thermophilus"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">4</span>]] <span class="ot">&lt;-</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>thermus_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>thermus <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#EFC000FF"</span>,<span class="st">"#0073C2FF"</span>,<span class="st">"cornflowerblue"</span>, <span class="st">"#CD534CFF"</span>),</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Thermus"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">4</span>]] <span class="ot">&lt;-</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>thermaceae_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>thermaceae <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#EFC000FF"</span>,<span class="st">"#0073C2FF"</span>,<span class="st">"cornflowerblue"</span>, <span class="st">"#CD534CFF"</span>),</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Thermaceae"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">4</span>]] <span class="ot">&lt;-</span> panTnseq_Full<span class="sc">$</span>Genes[panTnseq_Full<span class="sc">$</span>deinococcota_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>deinococcota <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#EFC000FF"</span>,<span class="st">"#0073C2FF"</span>,<span class="st">"cornflowerblue"</span>, <span class="st">"#CD534CFF"</span>),</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Deinococcota"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(tt, thermus, thermaceae, deinococcota, </span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>,<span class="st">"C"</span>,<span class="st">"D"</span>), <span class="at">ncol=</span><span class="dv">2</span>,<span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/venn-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption><font size="2">Figure 25. Venn diagram of TnSeq genes categories and Persistant genes in each pangenome).</font></figcaption>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(panTnseq_Full)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Genes"                              "eggNOG_OGs"                        
+ [3] "COG_category"                       "Description"                       
+ [5] "KEGG_ko"                            "COG_group"                         
+ [7] "Genes_HB8"                          "locus_tag"                         
+ [9] "name"                               "cluster"                           
+[11] "Ppol_1"                             "Ppol_2"                            
+[13] "HB27_1"                             "HB27_2"                            
+[15] "mean"                               "sd"                                
+[17] "tt_i4c5"                            "thermus_i4c5"                      
+[19] "thermaceae_i4c5"                    "deinococcota_i4c5"                 
+[21] "tt_i4c5_isolates"                   "tt_i4c5_seqs.per.isolate"          
+[23] "thermus_i4c5_isolates"              "thermus_i4c5_seqs.per.isolate"     
+[25] "thermaceae_i4c5_isolates"           "thermaceae_i4c5_seqs.per.isolate"  
+[27] "deinococcota_i4c5_isolates"         "deinococcota_i4c5_seqs.per.isolate"</code></pre>
+</div>
+</div>
+<p>Venn Diagrams</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>colorscale <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"white"</span>,<span class="st">"aquamarine"</span>,<span class="st">"aquamarine1"</span>,<span class="st">"aquamarine2"</span>,<span class="st">"aquamarine3"</span>,<span class="st">"aquamarine4"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>colorines <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"cloud"</span><span class="ot">=</span><span class="st">"#bbe59f"</span>,<span class="st">"shell"</span><span class="ot">=</span><span class="st">"#abc837"</span>,<span class="st">"persistent"</span><span class="ot">=</span><span class="st">"#339933"</span>,<span class="st">"Highly permissive"</span><span class="ot">=</span><span class="st">"#FF9966"</span>,<span class="st">"Intermediate"</span><span class="ot">=</span><span class="st">"#619CFF"</span> ,<span class="st">"Less permissive"</span><span class="ot">=</span> <span class="st">"#3366CC"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>panTnseq_Full[<span class="dv">17</span><span class="sc">:</span><span class="dv">20</span>] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(panTnseq_Full[<span class="dv">17</span><span class="sc">:</span><span class="dv">20</span>],factor, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"cloud"</span>,<span class="st">"shell"</span>,<span class="st">"persistent"</span>))</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggVennDiagram)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'ggVennDiagram'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:tidyr':
+
+    unite</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#t thermophilus</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>Tnlist <span class="ot">&lt;-</span> <span class="fu">append</span>(<span class="fu">unstack</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">17</span>)]),<span class="fu">unstack</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">10</span>)]))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>v1 <span class="ot">&lt;-</span> <span class="fu">ggVennDiagram</span>(Tnlist,<span class="at">set_color=</span>colorines,<span class="at">label=</span><span class="st">"count"</span>,<span class="at">label_alpha=</span><span class="dv">0</span>,<span class="at">show_intersect =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_gradientn</span>(<span class="at">colours=</span>colorscale)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>u1 <span class="ot">&lt;-</span> <span class="fu">ggVennDiagram</span>(Tnlist,<span class="at">force_upset =</span> <span class="cn">TRUE</span>,<span class="at">order.set.by =</span> <span class="st">"none"</span>, <span class="at">order.intersect.by =</span> <span class="st">"none"</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">#thermus</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>Tnlist <span class="ot">&lt;-</span> <span class="fu">append</span>(<span class="fu">unstack</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">18</span>)]),<span class="fu">unstack</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">10</span>)]))</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>v2 <span class="ot">&lt;-</span> <span class="fu">ggVennDiagram</span>(Tnlist,<span class="at">set_color=</span>colorines,<span class="at">label=</span><span class="st">"count"</span>,<span class="at">label_alpha=</span><span class="dv">0</span>,<span class="at">show_intersect =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>         <span class="fu">scale_fill_gradientn</span>(<span class="at">colours=</span>colorscale)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>u2 <span class="ot">&lt;-</span> <span class="fu">ggVennDiagram</span>(Tnlist,<span class="at">force_upset =</span> <span class="cn">TRUE</span>,<span class="at">order.set.by =</span> <span class="st">"none"</span>, <span class="at">order.intersect.by =</span> <span class="st">"none"</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">#thermaceae</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>Tnlist <span class="ot">&lt;-</span> <span class="fu">append</span>(<span class="fu">unstack</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">19</span>)]),<span class="fu">unstack</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">10</span>)]))</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>v3 <span class="ot">&lt;-</span> <span class="fu">ggVennDiagram</span>(Tnlist,<span class="at">set_color=</span>colorines,<span class="at">label=</span><span class="st">"count"</span>,<span class="at">label_alpha=</span><span class="dv">0</span>,<span class="at">show_intersect =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>         <span class="fu">scale_fill_gradientn</span>(<span class="at">colours=</span>colorscale)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>u3 <span class="ot">&lt;-</span> <span class="fu">ggVennDiagram</span>(Tnlist,<span class="at">force_upset =</span> <span class="cn">TRUE</span>,<span class="at">order.set.by =</span> <span class="st">"none"</span>, <span class="at">order.intersect.by =</span> <span class="st">"none"</span>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co">#deino</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>Tnlist <span class="ot">&lt;-</span> <span class="fu">append</span>(<span class="fu">unstack</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">20</span>)]),<span class="fu">unstack</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">10</span>)]))</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>v4 <span class="ot">&lt;-</span> <span class="fu">ggVennDiagram</span>(Tnlist,<span class="at">set_color=</span>colorines,<span class="at">label=</span><span class="st">"count"</span>,<span class="at">label_alpha=</span><span class="dv">0</span>,<span class="at">show_intersect =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>         <span class="fu">scale_fill_gradientn</span>(<span class="at">colours=</span>colorscale)</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>u4 <span class="ot">&lt;-</span> <span class="fu">ggVennDiagram</span>(Tnlist,<span class="at">force_upset =</span> <span class="cn">TRUE</span>,<span class="at">order.set.by =</span> <span class="st">"none"</span>, <span class="at">order.intersect.by =</span> <span class="st">"none"</span>)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co">#ggarrange(u1+labs(title=expression(italic("T. thermophilus"))), v2+labs(title=expression(italic("Thermus"))), v3+labs(title=expression(italic("Thermaceae"))), v4+labs(title=expression(italic("Deinococcaceae"))), ncol=2,nrow=2,common.legend=TRUE,legend = "bottom")</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"T. thermophilus"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "T. thermophilus"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>u1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/venn2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Tth_upset.svg"</span>,<span class="at">width=</span><span class="dv">4</span>,<span class="at">height=</span><span class="dv">4</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Thermus"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Thermus"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>u2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/venn2-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Thermaceae"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Thermaceae"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>u3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/venn2-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Deinococcota"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Deinococcota"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>u4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/venn2-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now, let’s try Euler diagrams.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">#svg("figure4c.svg")</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>),<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co">#thermus termophilus</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>Tnmat <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">as.data.frame</span>(<span class="fu">as.list</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">10</span>)]),<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">"Genes"</span>,<span class="st">"group"</span>)),</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>               <span class="fu">as.data.frame</span>(<span class="fu">as.list</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">17</span>)]),<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">"Genes"</span>,<span class="st">"group"</span>)))</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">venneuler</span>(<span class="fu">na.omit</span>(Tnmat)),<span class="at">col=</span><span class="fu">c</span>(<span class="st">"#FF9966"</span>,<span class="st">"#619CFF"</span> , <span class="st">"#3366CC"</span>,<span class="st">"#bbe59f"</span>,<span class="st">"#abc837"</span>,<span class="st">"#339933"</span>),<span class="at">alpha=</span><span class="fl">0.7</span>,<span class="at">main=</span><span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">"T. thermophilus"</span>)))</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co">#thermus</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>Tnmat <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">as.data.frame</span>(<span class="fu">as.list</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">10</span>)]),<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">"Genes"</span>,<span class="st">"group"</span>)),</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>               <span class="fu">as.data.frame</span>(<span class="fu">as.list</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">18</span>)]),<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">"Genes"</span>,<span class="st">"group"</span>)))</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">venneuler</span>(<span class="fu">na.omit</span>(Tnmat)),<span class="at">col=</span><span class="fu">c</span>(<span class="st">"#FF9966"</span>,<span class="st">"#619CFF"</span> , <span class="st">"#3366CC"</span>,<span class="st">"#bbe59f"</span>,<span class="st">"#abc837"</span>,<span class="st">"#339933"</span>),<span class="at">alpha=</span><span class="fl">0.7</span>,<span class="at">main=</span><span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">"Thermus"</span>)))</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="co">#termaceae</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>Tnmat <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">as.data.frame</span>(<span class="fu">as.list</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">10</span>)]),<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">"Genes"</span>,<span class="st">"group"</span>)),</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>               <span class="fu">as.data.frame</span>(<span class="fu">as.list</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">19</span>)]),<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">"Genes"</span>,<span class="st">"group"</span>)))</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">venneuler</span>(<span class="fu">na.omit</span>(Tnmat)),<span class="at">col=</span><span class="fu">c</span>(<span class="st">"#FF9966"</span>,<span class="st">"#619CFF"</span> , <span class="st">"#3366CC"</span>,<span class="st">"#bbe59f"</span>,<span class="st">"#abc837"</span>,<span class="st">"#339933"</span>),<span class="at">alpha=</span><span class="fl">0.7</span>,<span class="at">main=</span><span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">"Thermaceae"</span>)))</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="co">#deinococcota</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>Tnmat <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">as.data.frame</span>(<span class="fu">as.list</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">10</span>)]),<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">"Genes"</span>,<span class="st">"group"</span>)),</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>               <span class="fu">as.data.frame</span>(<span class="fu">as.list</span>(panTnseq_Full[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">20</span>)]),<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">"Genes"</span>,<span class="st">"group"</span>)))</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">venneuler</span>(<span class="fu">na.omit</span>(Tnmat)),<span class="at">col=</span><span class="fu">c</span>(<span class="st">"#FF9966"</span>,<span class="st">"#619CFF"</span> , <span class="st">"#3366CC"</span>,<span class="st">"#bbe59f"</span>,<span class="st">"#abc837"</span>,<span class="st">"#339933"</span>),<span class="at">alpha=</span><span class="fl">0.7</span>,<span class="at">main=</span><span class="fu">expression</span>(<span class="fu">italic</span>(<span class="st">"Deinococcota"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/euler-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption><font size="2">Figure 26. Venn diagram of TnSeq genes categories and Persistant genes in each pangenome).</font></figcaption>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>null device 
+          1 </code></pre>
+</div>
+</div>
+</section>
+<section id="enrichment-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="enrichment-analysis">Enrichment analysis</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>kk <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly Permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>thermaceae_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">1</span>]),</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">organism     =</span> <span class="st">'tth'</span>,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Reading KEGG annotation online: "https://rest.kegg.jp/link/tth/pathway"...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Reading KEGG annotation online: "https://rest.kegg.jp/list/pathway/tth"...</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk, <span class="at">title=</span><span class="st">"Thermaceae core genome"</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>kk_D <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly Permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>deinococcota_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">1</span>]),</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">organism     =</span> <span class="st">'tth'</span>,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk_D, <span class="at">title=</span><span class="st">"Deinococcota core genome"</span>)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2, </span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>), <span class="at">ncol=</span><span class="dv">1</span>,<span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">heights=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/enrichment_pan-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption><font size="2">Figure 27. Significantly enriched KEGG Ontology groups made up of Intermediate/Less permissive genes within the Core genome (persistant genes) of Thermaceae (A) or Deinococcota (B).</font></figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>uniprot <span class="ot">&lt;-</span> <span class="fu">bitr_kegg</span>(panTnseq_Full<span class="sc">$</span>Genes, <span class="at">fromType=</span><span class="st">"kegg"</span>, <span class="at">toType=</span><span class="st">'uniprot'</span>, <span class="at">organism=</span><span class="st">'tth'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Reading KEGG annotation online: "https://rest.kegg.jp/conv/uniprot/tth"...</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>panTnseq_Full <span class="ot">&lt;-</span> panTnseq_Full <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">uni =</span> <span class="fu">replace</span>(Genes, Genes <span class="sc">%in%</span> uniprot<span class="sc">$</span>kegg, uniprot<span class="sc">$</span>uniprot))</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>kk <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly Permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>thermus_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">30</span>]),</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">organism     =</span> <span class="st">'tth'</span>, <span class="at">keyType =</span> <span class="st">'uniprot'</span>,</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Reading KEGG annotation online: "https://rest.kegg.jp/conv/uniprot/tth"...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>--&gt; No gene can be mapped....</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>--&gt; Expected input gene ID: Q72L25,Q72J01,Q72GZ7,Q72IC9,Q72KC7,Q72H85</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>--&gt; return NULL...</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">is.null</span>(kk)){</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  p1 <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(kk<span class="sc">@</span>result<span class="sc">$</span>p.adjust<span class="sc">&lt;</span><span class="fl">0.05</span>)){</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  p1 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk, <span class="at">title=</span><span class="st">"Thermus core genome"</span>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    p1 <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>kk_t <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly Permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>thermaceae_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">30</span>]),</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">organism     =</span> <span class="st">'tth'</span>, <span class="at">keyType =</span> <span class="st">'uniprot'</span>,</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>           <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>--&gt; No gene can be mapped....</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>--&gt; Expected input gene ID: Q72L72,Q72KR6,Q72HS7,Q72KR7,Q72IR7,Q746I3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>--&gt; return NULL...</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">is.null</span>(kk_t)){</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  p2 <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(kk<span class="sc">@</span>result<span class="sc">$</span>p.adjust<span class="sc">&lt;</span><span class="fl">0.05</span>)){</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  p2 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk_t, <span class="at">title=</span><span class="st">"Thermaceae core genome"</span>)</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    p2 <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>kk_D <span class="ot">&lt;-</span> <span class="fu">enrichKEGG</span>(<span class="at">gene         =</span> <span class="fu">na.omit</span>(panTnseq_Full[panTnseq_Full<span class="sc">$</span>cluster<span class="sc">!=</span><span class="st">"Highly Permissive"</span>  <span class="sc">&amp;</span> panTnseq_Full<span class="sc">$</span>deinococcota_i4c5<span class="sc">==</span><span class="st">"persistent"</span>,<span class="dv">30</span>]),</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">organism     =</span> <span class="st">'tth'</span>, <span class="at">keyType =</span> <span class="st">'uniprot'</span>,</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>           <span class="at">pvalueCutoff =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>--&gt; No gene can be mapped....</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>--&gt; Expected input gene ID: Q72IN3,Q72GZ7,Q72KT2,Q72IF2,Q72L72,Q72GY7</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>--&gt; return NULL...</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">is.null</span>(kk_D)){</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  p3 <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(kk<span class="sc">@</span>result<span class="sc">$</span>p.adjust<span class="sc">&lt;</span><span class="fl">0.05</span>)){</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  p3 <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(kk_D, <span class="at">title=</span><span class="st">"Deinococcota core genome"</span>)</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    p3 <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2, p3,</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>), <span class="at">ncol=</span><span class="dv">1</span>,<span class="at">nrow =</span> <span class="dv">3</span>,<span class="at">heights=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/enrichment_uniprot-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption><font size="2">Figure 28. Significantly enriched KEGG Ontology groups made up of Intermediate/Less permissive genes within the Core genome (persistant genes) of Thermus (A), Thermaceae (B) or Deinococcota (C).</font></figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="compare-with-other-species" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Compare with other species</h1>
+<section id="data-from-zhang2018" class="level2">
+<h2 class="anchored" data-anchor-id="data-from-zhang2018">Data from Zhang2018</h2>
+<p>Since there is no clear correlation between gene conservation and the permissivity of Tn5 insertions, we decided to compare our results with previously published results. We used the data from <span class="citation" data-cites="zhang2018">Zhang et al. (<a href="#ref-zhang2018" role="doc-biblioref">2018</a>)</span> (SUPPLEMENTARY DATA 4), which includes the essential/non-essential genes of a wide range of prokaryotic organisms comprising extremophilic archaea (<em>Sulfolobus islandicus</em> and <em>Methanococcus maripaludis</em>) and various mesophilic bacteria (<em>Bacillus subtilis</em>, <em>Bacteroides fragilis</em>, <em>Escherichia coli</em>) as well as the minimal essential genome of <em>Micoplasma JVCI Syn3.0</em>.</p>
+<p>The following table contains the essential genes in all prokaryotic genomes and their HB27 orthologs as annotated by eggNOG. As you can see, out of 52 genes annotated as essentia in all thouse prokaryotic organisms, 6 were Highly Permissive and 34 (65%) Intermediate in HB27 TnSeq, but they are again highly conserved as all of them are persistent genes in the <em>T. thermophilus</em> pangenome and near 95% are still members of the core genome of <em>Deinococcota</em> pangenome.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">#data from https://www.nature.com/articles/s41467-018-07379-4</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>essentiality <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"bacteria_essential_genes/41467_2018_7379_MOESM6_ESM.xlsx"</span>,<span class="at">sheet=</span><span class="dv">1</span>)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(essentiality)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"eggNOG_OGs"</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>panTnseq_Full<span class="sc">$</span>eggNOG_OGs <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">@.*"</span>, <span class="st">""</span>, panTnseq_Full<span class="sc">$</span>eggNOG_OGs)</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>world_essential <span class="ot">&lt;-</span> <span class="fu">merge</span>(panTnseq_Full,essentiality)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="co">#names(world_essential)</span></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a> prok <span class="ot">&lt;-</span> <span class="fu">subset</span>(world_essential,world_essential[,<span class="dv">34</span>]<span class="sc">==</span><span class="st">"essential"</span> <span class="sc">&amp;</span> world_essential[,<span class="dv">35</span>]<span class="sc">==</span><span class="st">"essential"</span> <span class="sc">&amp;</span> world_essential[,<span class="dv">41</span>]<span class="sc">==</span><span class="st">"essential"</span> <span class="sc">&amp;</span> world_essential[,<span class="dv">38</span>]<span class="sc">==</span><span class="st">"essential"</span> <span class="sc">&amp;</span> world_essential[,<span class="dv">39</span>]<span class="sc">==</span><span class="st">"essential"</span> <span class="sc">&amp;</span> world_essential[,<span class="dv">40</span>]<span class="sc">==</span><span class="st">"essential"</span>)</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(prok[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">10</span>,<span class="dv">17</span><span class="sc">:</span><span class="dv">20</span>)],<span class="at">rownames =</span> <span class="cn">FALSE</span>,  <span class="at">escape =</span> <span class="cn">FALSE</span>, <span class="at">filter=</span><span class="st">"top"</span>, <span class="at">extensions =</span> <span class="st">'Responsive'</span>,<span class="at">options =</span> <span class="fu">list</span>( <span class="at">pageLength =</span> <span class="dv">25</span>, <span class="at">autoWidth =</span> <span class="cn">TRUE</span> ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-a2bc6d029b1cc8bd68c0" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-a2bc6d029b1cc8bd68c0">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"factor\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"width: 100%; display: none;\">\n      <select multiple=\"multiple\" style=\"width: 100%;\" data-options=\"[&quot;cloud&quot;,&quot;shell&quot;,&quot;persistent&quot;]\"><\/select>\n    <\/div>\n  <\/td>\n  <td data-type=\"factor\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"width: 100%; display: none;\">\n      <select multiple=\"multiple\" style=\"width: 100%;\" data-options=\"[&quot;cloud&quot;,&quot;shell&quot;,&quot;persistent&quot;]\"><\/select>\n    <\/div>\n  <\/td>\n  <td data-type=\"factor\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"width: 100%; display: none;\">\n      <select multiple=\"multiple\" style=\"width: 100%;\" data-options=\"[&quot;cloud&quot;,&quot;shell&quot;,&quot;persistent&quot;]\"><\/select>\n    <\/div>\n  <\/td>\n  <td data-type=\"factor\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"width: 100%; display: none;\">\n      <select multiple=\"multiple\" style=\"width: 100%;\" data-options=\"[&quot;cloud&quot;,&quot;shell&quot;,&quot;persistent&quot;]\"><\/select>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Responsive"],"data":[["COG0008","COG0008","COG0013","COG0016","COG0017","COG0017","COG0018","COG0024","COG0048","COG0049","COG0051","COG0052","COG0060","COG0081","COG0087","COG0088","COG0089","COG0090","COG0091","COG0094","COG0096","COG0097","COG0098","COG0099","COG0100","COG0102","COG0103","COG0124","COG0162","COG0172","COG0180","COG0186","COG0195","COG0197","COG0198","COG0199","COG0201","COG0202","COG0256","COG0361","COG0442","COG0462","COG0462","COG0470","COG0470","COG0480","COG0480","COG0495","COG0504","COG0522","COG0525","COG0532","COG0592"],["TT_C0070","TT_C0181","TT_C1480","TT_C1594","TT_C1087","TT_C0356","TT_C1906","TT_C1306","TT_C1333","TT_C1332","TT_C1329","TT_C0509","TT_C0702","TT_C1739","TT_C1328","TT_C1327","TT_C1326","TT_C1325","TT_C1323","TT_C1316","TT_C1314","TT_C1313","TT_C1311","TT_C1303","TT_C1302","TT_C1101","TT_C1100","TT_C0360","TT_C1033","TT_C0520","TT_C0864","TT_C1319","TT_C0349","TT_C1321","TT_C1317","TT_C1315","TT_C1308","TT_C1300","TT_C1312","TT_C1305","TT_C1889","TT_C1274","TT_C1184","TT_C1509","TT_C1686","TT_C1134","TT_C1331","TT_C1825","TT_C1102","TT_C1301","TT_C0805","TT_C0347","TT_C1609"],["Intermediate","Intermediate","Intermediate","Highly Permissive","Intermediate","Less Permissive","Intermediate","Less Permissive","Less Permissive","Less Permissive","Less Permissive","Intermediate","Intermediate","Intermediate","Intermediate","Less Permissive","Intermediate","Less Permissive","Less Permissive","Less Permissive","Less Permissive","Intermediate","Less Permissive","Less Permissive","Less Permissive","Intermediate","Less Permissive","Less Permissive","Highly Permissive","Less Permissive","Intermediate","Less Permissive","Intermediate","Less Permissive","Intermediate","Less Permissive","Intermediate","Intermediate","Intermediate","Intermediate","Highly Permissive","Highly Permissive","Intermediate","Intermediate","Intermediate","Highly Permissive","Intermediate","Highly Permissive","Intermediate","Less Permissive","Intermediate","Intermediate","Intermediate"],["persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent"],["persistent","persistent","shell","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","shell","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","shell","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent"],["persistent","persistent","shell","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","shell","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent"],["persistent","persistent","shell","persistent","persistent","persistent","persistent","shell","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent","shell","shell","persistent","persistent","persistent","persistent","persistent","persistent","persistent","persistent"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>eggNOG_OGs<\/th>\n      <th>Genes<\/th>\n      <th>cluster<\/th>\n      <th>tt_i4c5<\/th>\n      <th>thermus_i4c5<\/th>\n      <th>thermaceae_i4c5<\/th>\n      <th>deinococcota_i4c5<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":25,"autoWidth":true,"columnDefs":[{"name":"eggNOG_OGs","targets":0},{"name":"Genes","targets":1},{"name":"cluster","targets":2},{"name":"tt_i4c5","targets":3},{"name":"thermus_i4c5","targets":4},{"name":"thermaceae_i4c5","targets":5},{"name":"deinococcota_i4c5","targets":6}],"order":[],"orderClasses":false,"orderCellsTop":true,"responsive":true}},"evals":[],"jsHooks":[]}</script>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co">#table to save</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'kableExtra'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    group_rows</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kbl</span>(prok[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">22</span>,<span class="dv">23</span>,<span class="dv">30</span><span class="sc">:</span><span class="dv">33</span>)], <span class="at">align =</span> <span class="st">"c"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>,<span class="at">col.names=</span> <span class="fu">c</span>(<span class="st">"eggNOG"</span>,<span class="st">"Description"</span>,<span class="st">"TnSeq"</span>,<span class="st">"T. thermophilus"</span>,<span class="st">"Thermus"</span>,<span class="st">"Thermaceae"</span>,<span class="st">"Deinococcota"</span>), <span class="at">caption =</span> <span class="st">"Table 2. Tth TnSeq and Pangenome analysis of selected prokaryotic essential genes from diverse previous works. See Methods for details."</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="st">"condensed"</span>, <span class="at">full_width =</span> F, <span class="at">position =</span> <span class="st">"center"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column_spec</span>(<span class="dv">1</span>, <span class="at">bold =</span> T, <span class="at">italic=</span>F) <span class="co">#%&gt;% save_kable("table2_new.pdf",self_contained=TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-condensed caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Table 2. Tth TnSeq and Pangenome analysis of selected prokaryotic essential genes from diverse previous works. See Methods for details.</caption>
+<thead>
+<tr class="header">
+<th style="text-align: center;" data-quarto-table-cell-role="th">eggNOG</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">TnSeq</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">T. thermophilus</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Thermus</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Thermaceae</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Deinococcota</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0008</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">126</td>
+<td style="text-align: center;">M164_2038</td>
+<td style="text-align: center;">arCOG04302</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0008</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_2038</td>
+<td style="text-align: center;">arCOG04302</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0013</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">93</td>
+<td style="text-align: center;">M164_1812</td>
+<td style="text-align: center;">arCOG01255</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0016</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_2031</td>
+<td style="text-align: center;">arCOG00410</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0017</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1972</td>
+<td style="text-align: center;">arCOG00406</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0017</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">126</td>
+<td style="text-align: center;">M164_1972</td>
+<td style="text-align: center;">arCOG00406</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0018</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1339</td>
+<td style="text-align: center;">arCOG00487</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0024</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_2033</td>
+<td style="text-align: center;">arCOG01001</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0048</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1923</td>
+<td style="text-align: center;">arCOG04255</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0049</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1925</td>
+<td style="text-align: center;">arCOG04254</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0051</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1927</td>
+<td style="text-align: center;">arCOG01758</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0052</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">126</td>
+<td style="text-align: center;">M164_2060</td>
+<td style="text-align: center;">arCOG04245</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0060</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">126</td>
+<td style="text-align: center;">M164_1412</td>
+<td style="text-align: center;">arCOG00807</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0081</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">125</td>
+<td style="text-align: center;">M164_1809</td>
+<td style="text-align: center;">arCOG04289</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0087</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1414</td>
+<td style="text-align: center;">arCOG04070</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0088</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1415</td>
+<td style="text-align: center;">arCOG04071</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0089</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1416</td>
+<td style="text-align: center;">arCOG04072</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0090</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">126</td>
+<td style="text-align: center;">M164_1417</td>
+<td style="text-align: center;">arCOG04067</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0091</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1419</td>
+<td style="text-align: center;">arCOG04098</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0094</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1427</td>
+<td style="text-align: center;">arCOG04092</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0096</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1429</td>
+<td style="text-align: center;">arCOG04091</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0097</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1430</td>
+<td style="text-align: center;">arCOG04090</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0098</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1434</td>
+<td style="text-align: center;">arCOG04087</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0099</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_2052</td>
+<td style="text-align: center;">arCOG01722</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0100</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_2054</td>
+<td style="text-align: center;">arCOG04240</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0102</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">126</td>
+<td style="text-align: center;">M164_2057</td>
+<td style="text-align: center;">arCOG04242</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0103</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_2058</td>
+<td style="text-align: center;">arCOG04243</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0124</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">104</td>
+<td style="text-align: center;">M164_1870</td>
+<td style="text-align: center;">arCOG00404</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0162</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_2049</td>
+<td style="text-align: center;">arCOG01886</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0172</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1527</td>
+<td style="text-align: center;">arCOG00403</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0180</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1699</td>
+<td style="text-align: center;">arCOG01887</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0186</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1423</td>
+<td style="text-align: center;">arCOG04096</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0195</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1973</td>
+<td style="text-align: center;">arCOG01761</td>
+<td style="text-align: center;">Transcription</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0197</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1854</td>
+<td style="text-align: center;">arCOG04113</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0198</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1425</td>
+<td style="text-align: center;">arCOG04094</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0199</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1428</td>
+<td style="text-align: center;">arCOG00782</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0201</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1437</td>
+<td style="text-align: center;">arCOG04169</td>
+<td style="text-align: center;">Intracellular trafficking and secretion</td>
+<td style="text-align: center;">CELLULAR PROCESSES AND SIGNALING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0202</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_2055</td>
+<td style="text-align: center;">arCOG04241</td>
+<td style="text-align: center;">Transcription</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0256</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1433</td>
+<td style="text-align: center;">arCOG04088</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0361</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_0191</td>
+<td style="text-align: center;">arCOG01179</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0442</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1558</td>
+<td style="text-align: center;">arCOG00402</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0462</td>
+<td style="text-align: center;">2.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1165</td>
+<td style="text-align: center;">arCOG00067</td>
+<td style="text-align: center;">Nucleotide metabolism and transport</td>
+<td style="text-align: center;">METABOLISM</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0462</td>
+<td style="text-align: center;">2.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1165</td>
+<td style="text-align: center;">arCOG00067</td>
+<td style="text-align: center;">Nucleotide metabolism and transport</td>
+<td style="text-align: center;">METABOLISM</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0470</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1366</td>
+<td style="text-align: center;">arCOG00469</td>
+<td style="text-align: center;">Replication and repair</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0470</td>
+<td style="text-align: center;">1.22</td>
+<td style="text-align: center;">67</td>
+<td style="text-align: center;">M164_1366</td>
+<td style="text-align: center;">arCOG00469</td>
+<td style="text-align: center;">Replication and repair</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0480</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1407</td>
+<td style="text-align: center;">arCOG01559</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0480</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">123</td>
+<td style="text-align: center;">M164_1407</td>
+<td style="text-align: center;">arCOG01559</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0495</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">126</td>
+<td style="text-align: center;">M164_1539</td>
+<td style="text-align: center;">arCOG00809</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0504</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1940</td>
+<td style="text-align: center;">arCOG00063</td>
+<td style="text-align: center;">Nucleotide metabolism and transport</td>
+<td style="text-align: center;">METABOLISM</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0522</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_2053</td>
+<td style="text-align: center;">arCOG04239</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0525</td>
+<td style="text-align: center;">1.03</td>
+<td style="text-align: center;">127</td>
+<td style="text-align: center;">M164_1307</td>
+<td style="text-align: center;">arCOG00808</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; font-weight: bold;">COG0532</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">126</td>
+<td style="text-align: center;">M164_1916</td>
+<td style="text-align: center;">arCOG01560</td>
+<td style="text-align: center;">Translation, ribosomal structure and biogenesis</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; font-weight: bold;">COG0592</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">126</td>
+<td style="text-align: center;">M164_1753</td>
+<td style="text-align: center;">arCOG00488</td>
+<td style="text-align: center;">Replication and repair</td>
+<td style="text-align: center;">INFORMATION STORAGE AND PROCESSING</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Now we plot the data using Venn diagrams to compare the Tn-seq <em>Less Permissive</em> genes with the pangenomes <em>Persistent</em> and the 52 genes essential in all the strains analyzed in the paper.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggvenn)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Less_permissive =</span> panTnseq<span class="sc">$</span>Genes[panTnseq<span class="sc">$</span>cluster<span class="sc">==</span><span class="st">"Less Permissive"</span>],</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Persistent =</span> panTnseq<span class="sc">$</span>Genes[panTnseq<span class="sc">$</span>tt_i4c5<span class="sc">==</span><span class="st">"persistent"</span>],<span class="at">Essential =</span> prok<span class="sc">$</span>Genes</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>tt <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>   <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#3366CC"</span>,<span class="st">"#339933"</span>,<span class="st">"#EFC000FF"</span>),</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span>,<span class="at">show_percentage =</span> <span class="cn">FALSE</span></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Thermus thermophilus"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> panTnseq<span class="sc">$</span>Genes[panTnseq<span class="sc">$</span>thermus_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a>thermus <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#3366CC"</span>,<span class="st">"#339933"</span>,<span class="st">"#EFC000FF"</span>),</span>
+<span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span>,<span class="at">show_percentage =</span> <span class="cn">FALSE</span></span>
+<span id="cb56-19"><a href="#cb56-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Thermus"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb56-20"><a href="#cb56-20" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb56-21"><a href="#cb56-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-22"><a href="#cb56-22" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> panTnseq<span class="sc">$</span>Genes[panTnseq<span class="sc">$</span>thermaceae_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb56-23"><a href="#cb56-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-24"><a href="#cb56-24" aria-hidden="true" tabindex="-1"></a>thermaceae <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb56-25"><a href="#cb56-25" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb56-26"><a href="#cb56-26" aria-hidden="true" tabindex="-1"></a>   <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#3366CC"</span>,<span class="st">"#339933"</span>,<span class="st">"#EFC000FF"</span>),</span>
+<span id="cb56-27"><a href="#cb56-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span>,<span class="at">show_percentage =</span> <span class="cn">FALSE</span></span>
+<span id="cb56-28"><a href="#cb56-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Thermaceae"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb56-29"><a href="#cb56-29" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb56-30"><a href="#cb56-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-31"><a href="#cb56-31" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> panTnseq<span class="sc">$</span>Genes[panTnseq<span class="sc">$</span>deinococcota_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb56-32"><a href="#cb56-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-33"><a href="#cb56-33" aria-hidden="true" tabindex="-1"></a>deinococcota <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb56-34"><a href="#cb56-34" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb56-35"><a href="#cb56-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#3366CC"</span>,<span class="st">"#339933"</span>,<span class="st">"#EFC000FF"</span>),</span>
+<span id="cb56-36"><a href="#cb56-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span>, <span class="at">show_percentage =</span> <span class="cn">FALSE</span></span>
+<span id="cb56-37"><a href="#cb56-37" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Deinococcota"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb56-38"><a href="#cb56-38" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb56-39"><a href="#cb56-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-40"><a href="#cb56-40" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(tt, thermus, thermaceae, deinococcota, </span>
+<span id="cb56-41"><a href="#cb56-41" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>,<span class="st">"C"</span>,<span class="st">"D"</span>), <span class="at">ncol=</span><span class="dv">2</span>,<span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/zhang_venn-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption><font size="2">Figure 29. Venn diagrams showing the intersection of Tn-seq Less Permissive genes, Persistent genes of pangenomes at each taxonomic level and the 52 essential genes in all the bacteria analyzed in Zhang et al.</font></figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="based-on-rancati-et-al.-pmid-29033457-supp.-table-s1" class="level2">
+<h2 class="anchored" data-anchor-id="based-on-rancati-et-al.-pmid-29033457-supp.-table-s1">Based on Rancati et al.&nbsp;(<a href="https://pubmed.ncbi.nlm.nih.gov/29033457/">PMID 29033457</a>, Supp. Table S1)</h2>
+<p>We also downloaded the data from the papers indicated below and parsed the essential genes. To unify nomenclature, we tried to obtain the EggNOG COG code for each gene and used it to merge genes with different names across the different species. All data was parsed with an external <a href="scripts/essentials.R">R script</a> to generate a common table (<a href="bacteria_essential_genes/all_essentials.csv">all_essentials.csv</a>).</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Strain</th>
+<th>Ref. PMID</th>
+<th>Assembly</th>
+<th>FileName</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>E. coli K12</td>
+<td><a href="https://pubmed.ncbi.nlm.nih.gov/29463657/">29463657</a></td>
+<td>GCF_000800765.1</td>
+<td>mbo001183726st1.xlsx</td>
+</tr>
+<tr class="even">
+<td>M. tuberculosis H37Rv</td>
+<td><a href="https://pubmed.ncbi.nlm.nih.gov/28096490/">28096490</a></td>
+<td>GCF_000195955.2</td>
+<td>mbo002173137st3.xlsx</td>
+</tr>
+<tr class="odd">
+<td>M. genitalum G37</td>
+<td><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1324956/">16407165</a></td>
+<td>GCA_000027325.1</td>
+<td>pnas_0510013103_10013Table2.xls</td>
+</tr>
+<tr class="even">
+<td>P. aerugionsa PAO1</td>
+<td><a href="https://pubmed.ncbi.nlm.nih.gov/25848053/">25848053</a></td>
+<td>GCF_000006765.1</td>
+<td>pnas.1422186112.sd01.xlsx</td>
+</tr>
+<tr class="odd">
+<td>S. aureus HG003</td>
+<td><a href="https://pubmed.ncbi.nlm.nih.gov/25888466/">25888466</a></td>
+<td>GCF_000013425.1</td>
+<td>12864_2015_1361_MOESM2_ESM.xlsx</td>
+</tr>
+<tr class="even">
+<td>S. pyogenes (5448 &amp; NZ131)</td>
+<td><a href="https://pubmed.ncbi.nlm.nih.gov/25996237/">25996237</a></td>
+<td>GCA_000011765.2</td>
+<td>srep09838-s1.pdf (Table S3!)</td>
+</tr>
+<tr class="odd">
+<td>Synechococcus elongatus PCC 7942</td>
+<td><a href="https://pubmed.ncbi.nlm.nih.gov/26508635/">26508635</a></td>
+<td>GCF_000012525.1</td>
+<td>pnas.1519220112.sd03.xlsx</td>
+</tr>
+</tbody>
+</table>
+<p>First, we evaluate the correlation between the essential/indispensable genes with our HB27 TnSeq and pangenome data. As shown below, despite the fact that the bacterial data come from different sources, we see some negative correlation between the number of genomes with essential and dispensable genes. In addition, there is also a moderate positive correlation between gene essentiality and conservation in our pangenome. <strong>However, consistent with previous results, the TnSeq results do not correlate with other analyses</strong>, suggesting that <em>T. thermophilus</em> is reluctant to reveal its essential genes.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co">#data from https://www.nature.com/articles/s41467-018-07379-4</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>essential_mix <span class="ot">&lt;-</span> <span class="fu">read.csv2</span>(<span class="st">"bacteria_essential_genes/all_essentials.csv"</span>)</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>world_essential <span class="ot">&lt;-</span> <span class="fu">merge</span>(world_essential,essential_mix,<span class="at">by=</span><span class="st">"eggNOG_OGs"</span>)</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="fu">fwrite</span>(world_essential,<span class="st">"bacteria_essential_genes/all_essentials_panTnseq_10dic24.csv"</span>, <span class="at">sep=</span><span class="st">";"</span>)</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a><span class="co">#add rnaseq in HB27</span></span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>rnaseq <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"bacteria_essential_genes/pone.0124880.s002.xlsx"</span>,<span class="at">sheet=</span><span class="dv">1</span>)</span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rnaseq)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"Genes"</span></span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>panTnseq_Full2 <span class="ot">&lt;-</span>  <span class="fu">merge</span>(world_essential,rnaseq[,<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">7</span><span class="sc">:</span><span class="dv">9</span>)],<span class="at">by=</span><span class="st">"Genes"</span>,<span class="at">all.x=</span><span class="cn">TRUE</span>)</span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>panTnseq_Full2[,<span class="fu">c</span>(<span class="dv">11</span><span class="sc">:</span><span class="dv">16</span>,<span class="dv">21</span><span class="sc">:</span><span class="dv">28</span>,<span class="dv">51</span><span class="sc">:</span><span class="dv">55</span>)] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(panTnseq_Full2[,<span class="fu">c</span>(<span class="dv">11</span><span class="sc">:</span><span class="dv">16</span>,<span class="dv">21</span><span class="sc">:</span><span class="dv">28</span>,<span class="dv">51</span><span class="sc">:</span><span class="dv">55</span>)], as.numeric)</span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a>M <span class="ot">&lt;-</span><span class="fu">cor</span>(panTnseq_Full2[,<span class="fu">c</span>(<span class="dv">11</span><span class="sc">:</span><span class="dv">16</span>,<span class="dv">22</span>,<span class="dv">24</span>,<span class="dv">26</span>,<span class="dv">28</span>,<span class="dv">51</span><span class="sc">:</span><span class="dv">55</span>)], <span class="at">method =</span> <span class="st">"spearman"</span>, <span class="at">use =</span> <span class="st">"pairwise.complete.obs"</span>)</span>
+<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a>testRes <span class="ot">&lt;-</span>  <span class="fu">cor.mtest</span>(panTnseq_Full2[,<span class="fu">c</span>(<span class="dv">11</span><span class="sc">:</span><span class="dv">16</span>,<span class="dv">22</span>,<span class="dv">24</span>,<span class="dv">26</span>,<span class="dv">28</span>,<span class="dv">51</span><span class="sc">:</span><span class="dv">55</span>)], <span class="at">conf.level =</span> <span class="fl">0.99</span>)</span>
+<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(M, <span class="at">type=</span><span class="st">"lower"</span>, <span class="at">p.mat =</span> testRes<span class="sc">$</span>p, <span class="at">method =</span> <span class="st">'circle'</span>, <span class="at">insig=</span><span class="st">'blank'</span>,</span>
+<span id="cb57-17"><a href="#cb57-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.col=</span><span class="st">"black"</span>,<span class="at">tl.srt =</span> <span class="dv">45</span>, <span class="at">addCoef.col =</span><span class="st">'black'</span>, <span class="at">number.cex =</span> <span class="fl">0.5</span>,<span class="at">tl.cex=</span><span class="fl">0.5</span>, <span class="at">col=</span><span class="fu">brewer.pal</span>(<span class="at">n=</span><span class="dv">8</span>, <span class="at">name=</span><span class="st">"Spectral"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/world-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption><font size="2">Figure 30. Correlation between esentiality results in diverse bacteria, the HB27 TnSeq and Pangenome variables. Significant (p&lt;0.05) spearman r² are shown.</font></figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Again, we now analyze the comparison by Venn diagrams.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Less_permissive =</span> panTnseq<span class="sc">$</span>Genes[panTnseq<span class="sc">$</span>cluster<span class="sc">==</span><span class="st">"Less Permissive"</span>],</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Persistent =</span> panTnseq<span class="sc">$</span>Genes[panTnseq<span class="sc">$</span>tt_i4c5<span class="sc">==</span><span class="st">"persistent"</span>],</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>   <span class="at">Essential =</span> panTnseq_Full2<span class="sc">$</span>Genes[panTnseq_Full2<span class="sc">$</span>essential<span class="sc">&gt;=</span><span class="dv">4</span>]</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>tt <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#3366CC"</span>,<span class="st">"#339933"</span>,<span class="st">"#EFC000FF"</span>),</span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span>,<span class="at">show_percentage =</span> <span class="cn">FALSE</span></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Thermus thermophilus"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> panTnseq<span class="sc">$</span>Genes[panTnseq<span class="sc">$</span>thermus_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a>thermus <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a>   <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#3366CC"</span>,<span class="st">"#339933"</span>,<span class="st">"#EFC000FF"</span>),</span>
+<span id="cb58-18"><a href="#cb58-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span>,<span class="at">show_percentage =</span> <span class="cn">FALSE</span></span>
+<span id="cb58-19"><a href="#cb58-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Thermus"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb58-20"><a href="#cb58-20" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb58-21"><a href="#cb58-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-22"><a href="#cb58-22" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> panTnseq<span class="sc">$</span>Genes[panTnseq<span class="sc">$</span>thermaceae_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb58-23"><a href="#cb58-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-24"><a href="#cb58-24" aria-hidden="true" tabindex="-1"></a>thermaceae <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb58-25"><a href="#cb58-25" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb58-26"><a href="#cb58-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#3366CC"</span>,<span class="st">"#339933"</span>,<span class="st">"#EFC000FF"</span>),</span>
+<span id="cb58-27"><a href="#cb58-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span>,<span class="at">show_percentage =</span> <span class="cn">FALSE</span></span>
+<span id="cb58-28"><a href="#cb58-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Thermaceae"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb58-29"><a href="#cb58-29" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb58-30"><a href="#cb58-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-31"><a href="#cb58-31" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> panTnseq<span class="sc">$</span>Genes[panTnseq<span class="sc">$</span>deinococcota_i4c5<span class="sc">==</span><span class="st">"persistent"</span>]</span>
+<span id="cb58-32"><a href="#cb58-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-33"><a href="#cb58-33" aria-hidden="true" tabindex="-1"></a>deinococcota <span class="ot">&lt;-</span> <span class="fu">ggvenn</span>(</span>
+<span id="cb58-34"><a href="#cb58-34" aria-hidden="true" tabindex="-1"></a>  x, </span>
+<span id="cb58-35"><a href="#cb58-35" aria-hidden="true" tabindex="-1"></a> <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#3366CC"</span>,<span class="st">"#339933"</span>,<span class="st">"#EFC000FF"</span>),</span>
+<span id="cb58-36"><a href="#cb58-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">stroke_size =</span> <span class="fl">0.5</span>, <span class="at">set_name_size =</span> <span class="dv">4</span>, <span class="at">show_percentage =</span> <span class="cn">FALSE</span></span>
+<span id="cb58-37"><a href="#cb58-37" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Deinococcota"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))<span class="sc">+</span></span>
+<span id="cb58-38"><a href="#cb58-38" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.15</span>)))</span>
+<span id="cb58-39"><a href="#cb58-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-40"><a href="#cb58-40" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(tt, thermus, thermaceae, deinococcota, </span>
+<span id="cb58-41"><a href="#cb58-41" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>,<span class="st">"C"</span>,<span class="st">"D"</span>), <span class="at">ncol=</span><span class="dv">2</span>,<span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="panthermus_dd_files/figure-html/rancati_venn-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption><font size="2">Figure 31. Venn diagrams showing the intersection of Tn-seq Less Permissive genes, Persistent genes of pangenomes at each taxonomic level and the genes with 4 or more ortholog/paralogs identified as essential in the bacteria compared in Rancati et al.</font></figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The detailed table of bacteria essential genes and HB27 TnSeq+Pangenome data can be found in file <a href="bacteria_essential_genes/all_essentials_panTnseq.csv">all_essentials_panTnseq.csv</a>.</p>
+<p>This can be also easily shown if we plot the number of genomes with essential genes by the TnSeq group of those genes.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(<span class="fu">table</span>(world_essential<span class="sc">$</span>essential,world_essential<span class="sc">$</span>cluster)),<span class="fu">aes</span>(<span class="at">x=</span>Var1, <span class="at">y=</span>Freq,<span class="at">group=</span>Var2)) <span class="sc">+</span> </span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>         <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">fill=</span>Var2),<span class="at">stat =</span> <span class="st">"identity"</span>,<span class="at">position=</span><span class="st">"fill"</span>,<span class="at">color=</span><span class="st">"grey40"</span>, <span class="at">alpha=</span><span class="fl">0.8</span>) <span class="sc">+</span>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span>Freq),<span class="at">size=</span><span class="dv">4</span>, <span class="at">position =</span> <span class="fu">position_fill</span>(<span class="at">vjust=</span><span class="fl">0.5</span>) , <span class="at">col =</span> <span class="st">"black"</span>)<span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Number genomes with each essential gene"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"TnSeq group (%)"</span>) <span class="sc">+</span><span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span> <span class="fu">theme_bw</span>()<span class="sc">+</span> <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"TnSeq group"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+<p><em>Click for Session Information</em></p>
+</button>
+<div id="collapseOne" class="accordion-collapse collapse">
+<div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.4.1 (2024-06-14)
+Platform: x86_64-apple-darwin20
+Running under: macOS Sonoma 14.6.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Madrid
+tzcode source: internal
+
+attached base packages:
+[1] grid      stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] kableExtra_1.4.0       ggVennDiagram_1.5.2    ggvenn_0.1.10         
+ [4] venneuler_1.1-4        rJava_1.0-11           readxl_1.4.3          
+ [7] ggpubr_0.6.0           clusterProfiler_4.13.4 RColorBrewer_1.1-3    
+[10] corrplot_0.95          ggstats_0.7.0          patchwork_1.3.0       
+[13] lubridate_1.9.3        forcats_1.0.0          stringr_1.5.1         
+[16] purrr_1.0.2            readr_2.1.5            tidyr_1.3.1           
+[19] tibble_3.2.1           tidyverse_2.0.0        dplyr_1.1.4           
+[22] DT_0.33                data.table_1.16.2      ggplot2_3.5.1         
+[25] formatR_1.14           knitr_1.48            
+
+loaded via a namespace (and not attached):
+  [1] rstudioapi_0.17.1       jsonlite_1.8.9          magrittr_2.0.3         
+  [4] ggtangle_0.0.3          farver_2.1.2            rmarkdown_2.28         
+  [7] ragg_1.3.3              fs_1.6.5                zlibbioc_1.51.2        
+ [10] vctrs_0.6.5             memoise_2.0.1           ggtree_3.13.2          
+ [13] rstatix_0.7.2           htmltools_0.5.8.1       broom_1.0.7            
+ [16] cellranger_1.1.0        Formula_1.2-5           gridGraphics_0.5-1     
+ [19] sass_0.4.9              bslib_0.8.0             htmlwidgets_1.6.4      
+ [22] plyr_1.8.9              cachem_1.1.0            igraph_2.1.1           
+ [25] lifecycle_1.0.4         pkgconfig_2.0.3         fuzzyjoin_0.1.6        
+ [28] Matrix_1.7-1            R6_2.5.1                fastmap_1.2.0          
+ [31] gson_0.1.0              GenomeInfoDbData_1.2.13 digest_0.6.37          
+ [34] aplot_0.2.3             enrichplot_1.25.5       colorspace_2.1-1       
+ [37] AnnotationDbi_1.67.0    S4Vectors_0.43.2        crosstalk_1.2.1        
+ [40] textshaping_0.4.0       RSQLite_2.3.7           labeling_0.4.3         
+ [43] fansi_1.0.6             timechange_0.3.0        httr_1.4.7             
+ [46] abind_1.4-8             compiler_4.4.1          bit64_4.5.2            
+ [49] withr_3.0.2             backports_1.5.0         BiocParallel_1.39.0    
+ [52] carData_3.0-5           DBI_1.2.3               highr_0.11             
+ [55] R.utils_2.12.3          ggsignif_0.6.4          tools_4.4.1            
+ [58] ape_5.8                 R.oo_1.26.0             glue_1.8.0             
+ [61] nlme_3.1-166            GOSemSim_2.31.2         reshape2_1.4.4         
+ [64] fgsea_1.31.6            generics_0.1.3          gtable_0.3.6           
+ [67] tzdb_0.4.0              R.methodsS3_1.8.2       hms_1.1.3              
+ [70] xml2_1.3.6              car_3.1-3               utf8_1.2.4             
+ [73] XVector_0.45.0          BiocGenerics_0.51.3     ggrepel_0.9.6          
+ [76] pillar_1.9.0            yulab.utils_0.1.7       vroom_1.6.5            
+ [79] splines_4.4.1           treeio_1.29.2           lattice_0.22-6         
+ [82] bit_4.5.0               tidyselect_1.2.1        GO.db_3.20.0           
+ [85] Biostrings_2.73.2       IRanges_2.39.2          svglite_2.1.3          
+ [88] stats4_4.4.1            xfun_0.48               Biobase_2.65.1         
+ [91] stringi_1.8.4           UCSC.utils_1.1.0        lazyeval_0.2.2         
+ [94] ggfun_0.1.7             yaml_2.3.10             evaluate_1.0.1         
+ [97] codetools_0.2-20        qvalue_2.37.0           ggplotify_0.1.2        
+[100] cli_3.6.3               systemfonts_1.1.0       jquerylib_0.1.4        
+[103] munsell_0.5.1           Rcpp_1.0.13             GenomeInfoDb_1.41.2    
+[106] png_0.1-8               parallel_4.4.1          blob_1.2.4             
+[109] DOSE_3.99.1             viridisLite_0.4.2       tidytree_0.4.6         
+[112] scales_1.3.0            writexl_1.5.1           crayon_1.5.3           
+[115] rlang_1.1.4             cowplot_1.1.3           fastmatch_1.1-4        
+[118] KEGGREST_1.45.1        </code></pre>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</section>
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-zhang2018" class="csl-entry" role="listitem">
+Zhang, Changyi, Alex P. R. Phillips, Rebecca L. Wipfler, Gary J. Olsen, and Rachel J. Whitaker. 2018. <span>“The Essential Genome of the Crenarchaeal Model Sulfolobus Islandicus.”</span> <em>Nature Communications</em> 9 (1): 4908. <a href="https://doi.org/10.1038/s41467-018-07379-4">https://doi.org/10.1038/s41467-018-07379-4</a>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>MRR, 2024</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://creativecommons.org/licenses/by-nc/2.0/">
+      <i class="bi bi-badge-cc-fill" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="https://twitter.com/mredrejo">
+<p><iconify-icon inline="" icon="fa6-brands:x-twitter"></iconify-icon></p>
+</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="https://bsky.app/profile/mredrejo.bsky.social">
+<p><iconify-icon inline="" icon="simple-icons:bluesky"></iconify-icon></p>
+</a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
