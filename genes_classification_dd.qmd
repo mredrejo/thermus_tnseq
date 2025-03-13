@@ -16,7 +16,7 @@ number-sections: true
 number-depth: 1
 code-overflow: wrap
 code-fold: true
-code-summary: "Show the code"
+code-summary: "Show code"
 link-external-icon: true
 link-external-newwindow: true 
 editor: visual
@@ -76,26 +76,26 @@ scores$mean <- apply(scores[,2:5], 1, mean,na.rm=TRUE)
 #    scores[j,i][is.na(scores[j,i])] <- scores[j,6]
 #  }
 #}
-my.cols <- brewer.pal(4, "Paired")
+my.cols <- brewer.pal(5, "Paired")
 #density plot
 den <- ggplot(data=stack(scores[,2:6]))+geom_density(aes(x=as.numeric(values),fill=ind,color=ind), alpha=0.4)+
-    scale_color_manual(values=c(my.cols,"black")) +
-  scale_fill_manual(values=c(my.cols,"black")) +
-    geom_vline(aes(xintercept=-0.5), color="grey", linetype="dashed")+
-    geom_vline(aes(xintercept=0.5), color="orange", linetype="dashed") + xlab("Z-scores") +
-  theme_bw()
+    scale_color_manual(values=c(my.cols)) + scale_fill_manual(values=c(my.cols)) +
+    geom_vline(aes(xintercept=-0.65), color="grey", linetype="dashed")+
+    geom_vline(aes(xintercept=0.55), color="orange", linetype="dashed") + 
+  xlab("Z-scores") + theme_bw()+ylab("Gene density")+ guides(alpha="none",color="none")+labs(fill="Sample")
 #Hist
-hist <- ggplot(data=stack(scores[,2:6]))+geom_histogram(aes(x=as.numeric(values),fill=ind,color=ind, alpha=0.2),binwidth=0.2)+
-     #scale_color_manual(values=c(my.cols,"black")) +
-     #scale_fill_manual(values=c(my.cols,"black")) +
-  scale_color_brewer(palette="Paired") + scale_fill_brewer(palette="Paired")+   
-  geom_vline(aes(xintercept=-0.6), color="grey", linetype="dashed")+
-     geom_vline(aes(xintercept=1),
+hist <- ggplot(data=stack(scores[,2:5]))+geom_histogram(aes(x=as.numeric(values),fill=ind,color=ind, alpha=0.2),binwidth=0.2)+
+scale_color_manual(values=c(my.cols)) + scale_fill_manual(values=c(my.cols)) +
+#  scale_color_brewer(palette="Paired") + scale_fill_brewer(palette="Paired")+   
+  geom_vline(aes(xintercept=-0.65), color="grey", linetype="dashed")+
+     geom_vline(aes(xintercept=0.55),
                 color="orange", linetype="dashed") + xlab("Z-scores") + facet_grid(~ind) +
-     theme_bw()
-#ggsave("fig2b",hist+theme(legend.position = "none"),width=6,height=4)
+     theme_bw()+ylab("Gene count")+guides(alpha="none",color="none")+labs(fill="Sample")
+
 ggarrange(den, hist, 
           labels = c("A", "B"), ncol=1,nrow = 2)
+
+ggsave("fig2b_new.svg",hist,width=6,height=3.6)
  
 ```
 
@@ -201,27 +201,26 @@ The Kmeans clustering is slightly better as its clusters area are closer to the 
 datos.j = cbind(scores, cluster= kmclust2$cluster)
 
 ggplot(data=cbind(datos.j$cluster,stack(datos.j[,2:5]))) +xlab("Z-Score (log2)") + ylab("Gene density") + 
-     geom_density(aes(x=as.numeric(values),group=as.factor(`datos.j$cluster`), color=`datos.j$cluster`, fill=`datos.j$cluster`), alpha=0.7)+
+     geom_density(aes(x=as.numeric(values),group=as.factor(`datos.j$cluster`), color=as.factor(`datos.j$cluster`), fill=as.factor(`datos.j$cluster`)), alpha=0.7)+
+  scale_fill_manual(values=c( "#619CFF" ,"#3366CC"))+
+  scale_color_manual(values=c( "#619CFF" ,"#3366CC"))+
     theme_classic() + facet_grid(~ind)  +labs(fill="Cluster",color="Cluster")
 ```
 
-The first group contains the genes with higher Z-score mean and the second large group contains the genes with less insertions. To highlight the top genes with less insertions, we empirically select the \~10% genes with less insertions as **"Less Permissive"** genes, corresponding to 212 genes with a Z-score \< -0.6. This subset is an artificial creation within the “Intermediate” cluster, not distinctly separate from it (Figure 16), but useful for data representation and discussion.
+The first group contains the genes with higher Z-score mean and the second large group contains the genes with less insertions. To highlight the top genes with less insertions, we empirically select the top 20% genes with less insertions as **"Less Permissive"** genes, corresponding to 453 genes with a Z-score \< -0.6. This subset is an artificial creation within the “Intermediate” cluster, not distinctly separate from it (Figure 16), but useful for data representation and discussion.
 
 ```{r , fig.cap=capFig("Density plot of genes by cluster in each sample including the Less Permissive group")}
 
-#how many?
-#nrow(datos.j[datos.j$HB27_1<(-0.6) & datos.j$HB27_2<(-0.6)  & datos.j$Ppol_1<(-0.6)  & datos.j$Ppol_2<(-0.6) ,])
 
-datos.j$cluster[datos.j$Ppol_1<(-0.6) & datos.j$Ppol_2<(-0.6)  & datos.j$HB27_1<(-0.6)  & datos.j$HB27_2<(-0.6)] <- 3
+#top 20% of genes with lower z-score
+less <- head(datos.j[order(datos.j$mean, decreasing = FALSE),1],round(nrow(datos.j)*.20,0))
+datos.j$cluster[datos.j$Genes %in% less] <- 3
+
 datos.j$cluster <- as.factor(datos.j$cluster)
 
 datos.j <- datos.j %>% 
     mutate(across(c('Ppol_1', 'Ppol_2',"HB27_1","HB27_2","mean"), round, 3)) %>% 
 mutate(cluster = case_when(cluster == 1 ~ "Intermediate", cluster == 2 ~ "Highly Permissive",cluster==3 ~ "Less Permissive")) 
-
-ggplot(data=cbind(datos.j$cluster,stack(datos.j[,2:5]))) +xlab("Z-Score") + ylab("Gene density") +
-     geom_density(aes(x=as.numeric(values),group=as.factor(`datos.j$cluster`), color=`datos.j$cluster`, fill=`datos.j$cluster`), alpha=0.7)+
-    theme_classic() + facet_grid(~ind)  +labs(fill="Cluster",color="Cluster")
 
 
 ```
@@ -232,7 +231,7 @@ The separation between the "Intermediate" and "Highly Permissive" cluster is not
 datatable(datos.j,rownames = FALSE,  escape = FALSE, filter="top", extensions = 'Responsive',options = list( pageLength = 25, autoWidth = TRUE ))
 
 #save final table
-write.table(datos.j,"scores_clusters_11nov2024.csv",sep=";",row.names=FALSE)
+write.table(datos.j,"scores_clusters_24feb2025.csv",sep=";",row.names=FALSE)
 ```
 
 
@@ -257,7 +256,7 @@ p1 <- ggplot(data=tmp) +
   #   theme_classic() + facet_grid(~ind) 
 #final plot for paper
 p2 <- ggplot(data=datos.j[,6:7]) +xlab("Z-Score") + ylab("Gene density") +
-     geom_density(aes(x=as.numeric(mean),group=as.factor(cluster), color=cluster, fill=cluster), alpha=0.7)+
+     geom_histogram(aes(x=as.numeric(mean),group=as.factor(cluster), color=cluster, fill=cluster),binwidth=0.1, alpha=0.7)+
      theme_classic()   +labs(fill="Group",color="Group")+scale_fill_manual(values=c("#FF9966","#619CFF" , "#3366CC"))+scale_color_manual(values=c("#FF9966", "#619CFF" ,"#3366CC"))+guides(fill=guide_legend(position = "inside"))+theme(legend.position.inside = c(0.8,0.7))
 ggsave("fig3a.pdf",p2,width=4,height=2.5)
 ggarrange(p1, p2,
@@ -365,8 +364,8 @@ final[grep("tRNA-",final$name),11] <- "ko:K14228"
 final[grep("rRNA",final$name),11] <- "ko:K01980"
 final <- final %>% replace(is.na(.), '-')
 final[,8] <- substr(final[,8],1,7)
-final <- final[,c(1,7:16,2:6,18)]
-write.table(final,"tnSeq_dd_full.csv", sep=";", row.names=FALSE)
+final <- final[,c(1,7:15,2:6,18,16)]
+write.table(final[!duplicated(final),],"tnSeq_dd_full.csv", sep=";", row.names=FALSE)
 
 #correlation
 wt <- ggplot(data = final, aes(x=HB27_1,y=HB27_2,color=COG_group))+geom_point(size=3,alpha=0.6) +  theme_linedraw() + 
@@ -416,7 +415,7 @@ ggplot(cog2[!cog2$values==0,],aes(y=ratio, x=definition, group=ind, fill=ind)) +
 ```{r cog3, fig.width=10,fig.height=4, fig.cap=capFig("Abundance of Less Permissive genes amongst COG functions")}
 ggplot(cog2[!cog2$values==0 & cog2$ind=="Less_permissive",],aes(y=ratio, x=definition, group=ind)) + 
      geom_bar(stat="identity", position="stack", fill="steelblue", alpha=0.8) + ylab("Gene category (%)") + xlab("") + coord_flip() + scale_y_continuous(breaks = seq(0, 100, by = 10)) +   theme_bw() + theme(text=element_text(size=15))
-#gsave("figs5b.pdf",width=9,height=4)
+#ggsave("figs5b.pdf",width=9,height=4)
 ```
 
 ### KEGG
@@ -467,6 +466,7 @@ xkegg$cluster <- factor(xkegg$cluster,levels=c("Less Permissive","Intermediate",
 ggplot(xkegg, aes(y=Freq, x=pathway, group=cluster, fill=cluster)) + 
      geom_bar(stat="identity", position="stack",color="grey40",linewidth=0.2, alpha=0.7) + ylab("KO group members") + xlab("") + theme_bw() + theme(text=element_text(size=15), axis.text.x = element_text( angle = 45,  hjust = 1, size = 12),plot.margin =margin(l=100,b=10,t=5,r=5) )  +
      facet_wrap(~a_class+b_class,scales="free",drop=TRUE,ncol=3, labeller = label_wrap_gen(30))  + theme(legend.position = "none")
+#ggsave("figS5c.pdf",width=9,height=4)
  
 ```
 
@@ -516,11 +516,11 @@ ribo_link <- paste0(ribo_link,paste0("/",paste0(c("TT_C3035","TT_C3056","TT_C303
 
 As an example, you can see some of the HB27 RNA transcrition & translation and DNA replication & repair pathways in the following links: `r paste0("[Ribosome](", ribo_link,")")`{target="_blank"}, `r paste0("[RNA Polymerase](", rpo_link,")")`{target="_blank"}, `r paste0("[DNA Replication](", repli_link,")")`{target="_blank"}, `r paste0("[Base Excision Repair](", ber_link,")")`{target="_blank"}, `r paste0("[Mismatch Repair](", mmr_link,")")`{target="_blank"}, `r paste0("[Nucleotide Excision Repair](", ner_link,")")`{target="_blank"}, and `r paste0("[Homologous Recombination](", hr_link,")")`{target="_blank"}. The genes with orthologs in HB27 are depicted with green background and the Intermediate/Less Permissive genes are highlighted in red.
 
-
-```{r enrichment_pan, eval=FALSE,error=FALSE, fig.height=8, fig.cap=capFig("Significantly enriched KEGG Ontology groups made up of Less Permissive & Intermediate genes by KEGG ontology groups (A) or KEGG modules (B).")}
+## Enrichment analysis
+```{r enrichment_pan, eval=TRUE,error=FALSE, fig.height=8, fig.cap=capFig("Significantly enriched KEGG Ontology groups made up of Less Permissive genes by KEGG ontology groups (A) or KEGG modules (B).")}
 
 tt <- search_kegg_organism('Thermus thermophilus', by='scientific_name')
-kk <- enrichKEGG(gene         = datos.j[datos.j$cluster=="Less Permissive"|datos.j$cluster=="Intermediate",1],
+kk <- enrichKEGG(gene         = datos.j[datos.j$cluster=="Highly Permissive",1],
                  organism     = 'tth',
                  pvalueCutoff = 0.05)
 if (sum(kk@result$p.adjust<0.05)!=0){
@@ -530,10 +530,10 @@ if (sum(kk@result$p.adjust<0.05)!=0){
 }
 
 
-mkk <- enrichMKEGG(gene         = datos.j[datos.j$cluster=="Less Permissive"|datos.j$cluster=="Intermediate",1],
+mkk <- enrichMKEGG(gene         = datos.j[datos.j$cluster=="Less Permissive",1],
                  organism     = 'tth',
-                   pvalueCutoff = 1,
-                   qvalueCutoff = 1)
+                   pvalueCutoff = 0.05,
+                   qvalueCutoff = 0.05)
 if (sum(mkk@result$p.adjust<0.05)!=0){
 p2 <- dotplot(mkk, title="Significant enriched KEGG modules")
 }else {
@@ -542,7 +542,7 @@ p2 <- dotplot(mkk, title="Significant enriched KEGG modules")
 
 
 ggarrange(p1, p2, 
-          labels = c("A", "B"), ncol=1,nrow = 2,heights=c(1,3))
+          labels = c("C", "D"), ncol=1,nrow = 2,heights=c(1,3))
        
 
 ```

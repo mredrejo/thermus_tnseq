@@ -16,7 +16,7 @@ number-sections: true
 number-depth: 1
 code-overflow: wrap
 code-fold: true
-code-summary: "Show the code"
+code-summary: "Show code"
 link-external-icon: true
 link-external-newwindow: true 
 editor: visual
@@ -123,17 +123,15 @@ names(stats) <- c("level","numbers","partition")
 ggplot(stats,aes(x=level, y=numbers,group=partition)) + 
          geom_bar(aes(fill=partition),stat = "identity",position="fill",color="grey40", alpha=0.8) + ylab("Gene families (%)")+ geom_text(aes(label=numbers),size=5, position = position_fill(vjust=0.5) , col = "black")+xlab("Pangenome level") +scale_y_continuous(labels = scales::percent) + theme_bw()+scale_fill_manual(values=c("#bbe59f","#abc837","#339933") )
 ```
+
 ```{r fig4a2,echo=FALSE,eval=FALSE}
 #plot for paper
 ggplot(stats,aes(x=level, y=numbers,group=partition)) + 
      geom_bar(aes(fill=partition),stat = "identity",position="fill",color="grey40", alpha=0.8) + ylab("Gene families (%)")+ geom_text(aes(label=numbers),size=4, position = position_fill(vjust=0.5) , col = "black")+xlab("Pangenome level") +scale_y_continuous(labels = scales::percent) + labs(fill="Pangenome Partition")+theme_bw()+theme(axis.text.x = element_text(angle = 45,vjust=1,hjust=1),text=element_text(face="bold"))+scale_fill_manual(values=c("#bbe59f","#abc837","#339933") )
-#ggsave("figS4a.pdf",width=5,height=5)
+ggsave("fig4a.pdf",width=5,height=5)
 ```
 
 The number of clusters or gene families conserved (Shell+Persistent) increases as we go down in the taxonomical level. Note that the Shell partition shrinks at the species level, suggesting that the identity threshold is probably low at this level for a detailed pangenome analysis. However, as we will focus in the Persistent partition, the calculated pangenomes would be enough informative.
-
-```         
-```
 
 # Integration of TnSeq and pangenomes
 
@@ -172,13 +170,20 @@ for (i in 1:length(pangenomes)){
   matrix[[i]]<- read.table(paste0("pangenomes/",pangenomes[i],"/matrix.csv"),sep=",",header=TRUE)
   matrix[[i]] <- matrix[[i]][,c(4,6,match("GCF_000008125.1",names(matrix[[i]])))]
   colnames(matrix[[i]])[3] <- "gene"
-  #HB27_annotated <- merge(HB27_annotated,matrix[[i]], by="gene",all.x=TRUE)
-  
-  for (j in 1:nrow(HB27_annotated)){
-    k <- grep(HB27_annotated$gene[j],matrix[[i]]$gene)
-    HB27_annotated$isolates[j] <- matrix[[i]]$No..isolates[k] 
-    HB27_annotated$seqs[j] <- matrix[[i]]$Avg.sequences.per.isolate[k] 
-  }
+
+  #for (j in 1:nrow(HB27_annotated)){
+  #  k <- grep(HB27_annotated$gene[j],matrix[[i]]$gene)
+  #  HB27_annotated$isolates[j] <- matrix[[i]]$No..isolates[k] 
+  #  HB27_annotated$seqs[j] <- matrix[[i]]$Avg.sequences.per.isolate[k] 
+  #}
+  HB27_annotated$isolates <- sapply(1:nrow(HB27_annotated), function(j) {
+  k <- grep(HB27_annotated$gene[j], matrix[[i]]$gene)
+  matrix[[i]]$No..isolates[k]
+  })
+  HB27_annotated$seqs <- sapply(1:nrow(HB27_annotated), function(j) {
+  k <- grep(HB27_annotated$gene[j], matrix[[i]]$gene)
+  matrix[[i]]$Avg.sequences.per.isolate[k] 
+  })
   colnames(HB27_annotated)[c(length(HB27_annotated)-1,length(HB27_annotated))] <- c(paste0(pangenomes[i],"_isolates"),paste0(pangenomes[i],"_seqs.per.isolate"))
 }
 
@@ -187,26 +192,30 @@ panTnseq <- merge(tnseq,HB27_annotated[,c(11,5:8,12:19)])
 panTnseq_Full <-  merge(tnseq,HB27_annotated[,c(11,5:8,12:19)],by="Genes",all.x=TRUE)
 #reorder columns and save
 setcolorder(panTnseq_Full,"cluster",before ="Ppol_1")
-
-fwrite(panTnseq_Full,"tnseq_pangenome_12nov2024.csv",sep=";", row.names = FALSE)
-writexl::write_xlsx(panTnseq_Full,"tnseq_pangenome_12nov2024.xlsx")
+#combine description fields
+panTnseq_Full$Description.y[panTnseq_Full$Description.y=="-"] <- panTnseq_Full$Description.x[panTnseq_Full$Description.y=="-"]
+setcolorder(panTnseq_Full,"Description.y",before ="Description.x")
+panTnseq_Full <- panTnseq_Full[,-5]
+names(panTnseq_Full)[4] <- "Description"
+#save
+#fwrite(panTnseq_Full,"tnseq_pangenome_25feb2025.csv",sep=";", row.names = FALSE)
+#writexl::write_xlsx(panTnseq_Full,"tnseq_pangenome_25feb2025.xlsx")
 
 ```
 
 We have been able to match in the pangenome 2190 genes out of 2275, with only 3 genes of the newly annotated HB27 (GCF_000008125.1_07995, GCF_000008125.1_08920, and GCF_000008125.1_08925) that matched with two genes in the classical annotation (TT_CXXXX).
 
-The final table is saved as [tnseq_pangenome_12nov2024.xlsx](tnseq_pangenome_12nov2024.xlsx)
+The final table is saved as [tnseq_pangenome_25feb2025.xlsx](tnseq_pangenome_25feb2025.xlsx)
 
 ## Correlation between TnSeq and Pangenome
 
 ```{r corrplot1,echo=FALSE,eval=FALSE, fig.cap=capFig("Correlation between TnSeq and Pangenome variables.")}
 
 #corr
-panTnseq_Full$cluster2 <- as.numeric(as.factor(panTnseq_Full$cluster))
 
-panTnseq_Full[,c(12:17,22:29)] <- lapply(panTnseq_Full[,c(12:17,22:29)], as.numeric)
-M <-cor(panTnseq_Full[,c(12:16,22,24,26,28)], method = "spearman", use = "pairwise.complete.obs")
-testRes <-  cor.mtest(panTnseq_Full[,c(12:16,22,24,26,28)], conf.level = 0.95)
+panTnseq_Full[,c(11:15,21:28)] <- lapply(panTnseq_Full[,c(11:15,21:28)], as.numeric)
+M <-cor(panTnseq_Full[,c(11:15,21,23,25,27)], method = "spearman", use = "pairwise.complete.obs")
+testRes <-  cor.mtest(panTnseq_Full[,c(11:15,21,23,25,27)], conf.level = 0.99)
 corrplot(M, type="lower", p.mat = testRes$p, method = 'circle', insig='blank',
          tl.col="black",tl.srt = 45, addCoef.col ='black', number.cex = 0.5,tl.cex=0.5, col=brewer.pal(n=8, name="Spectral"))
 
@@ -223,9 +232,9 @@ high <- c()
 intermediate <- c()
 less <- c()
 for (i in 1:4){
-  high[i] <- nrow(subset(panTnseq,panTnseq[,17+i]=="persistent"  & panTnseq$cluster=="Highly Permissive" ))
-   intermediate[i] <- nrow(subset(panTnseq,panTnseq[,17+i]=="persistent" & panTnseq$cluster=="Intermediate" ))
-   less[i] <- nrow(subset(panTnseq,panTnseq[,17+i]=="persistent" & panTnseq$cluster=="Less Permissive" ))
+  high[i] <- nrow(subset(panTnseq,panTnseq[,16+i]=="persistent"  & panTnseq$cluster=="Highly Permissive" ))
+   intermediate[i] <- nrow(subset(panTnseq,panTnseq[,16+i]=="persistent" & panTnseq$cluster=="Intermediate" ))
+   less[i] <- nrow(subset(panTnseq,panTnseq[,16+i]=="persistent" & panTnseq$cluster=="Less Permissive" ))
 }
 stats <- data.frame(high,intermediate,less)
 row.names(stats) <- names(pangenomes)
@@ -234,13 +243,14 @@ names(stats) <- c("level","ratio","cluster")
 #plot
 ggplot(stats,aes(x=level, y=ratio,group=cluster)) + 
     geom_bar(aes(fill=cluster),stat = "identity",position="fill",color="grey40", alpha=0.8) + ylab("Pangenome Persistent Genes  (%)")+ geom_text(aes(label=ratio),size=5, position = position_fill(vjust=0.5) , col = "black")+xlab("Pangenome level") +scale_y_continuous(labels = scales::percent) +theme_bw()+ theme(axis.text.x = element_text(angle = 45,vjust=1,hjust=1),text=element_text(face="bold"))+labs(fill="TnSeq gene group")+scale_fill_manual(labels=c("Highly permissive","Intermediate","Less Permissive"),values=c("#FF9966", "#619CFF" ,"#3366CC")) 
-ggsave("figS5b.pdf",width=5,height=5)
+ggsave("fig4b.pdf",width=5,height=5)
 ```
 
 Now, let's see genes distribution in the different groups using Venn diagrams.
 
 ```{r venn, fig.height=10,fig.width=10, fig.cap=capFig("Venn diagram of TnSeq genes categories and Persistant genes in each pangenome).")}
-x <- list(
+
+       x <- list(
   Intermediate = panTnseq_Full$Genes[panTnseq_Full$cluster=="Intermediate"], 
   Highly_permissive = panTnseq_Full$Genes[panTnseq_Full$cluster=="Highly Permissive"], 
   Less_permissive = panTnseq_Full$Genes[panTnseq_Full$cluster=="Less Permissive"], 
@@ -282,36 +292,36 @@ deinococcota <- ggvenn(
   ) + ggtitle("Deinococcota") + theme(plot.title = element_text(hjust = 0.5))+
    scale_x_continuous(expand = expansion(mult = c(0.15, 0.15)))
 
+
 ggarrange(tt, thermus, thermaceae, deinococcota, 
           labels = c("A", "B","C","D"), ncol=2,nrow = 2)
-       
-
-
+names(panTnseq_Full)
 ```
+
 Venn Diagrams
 
-```{r venn2}
+```{r venn2, eval=T}
 colorscale <- c("white","aquamarine","aquamarine1","aquamarine2","aquamarine3","aquamarine4")
 colorines <- c("cloud"="#bbe59f","shell"="#abc837","persistent"="#339933","Highly permissive"="#FF9966","Intermediate"="#619CFF" ,"Less permissive"= "#3366CC")
-panTnseq_Full[18:21] <- lapply(panTnseq_Full[18:21],factor, levels=c("cloud","shell","persistent"))
+panTnseq_Full[17:20] <- lapply(panTnseq_Full[17:20],factor, levels=c("cloud","shell","persistent"))
 library(ggVennDiagram)
 #t thermophilus
-Tnlist <- append(unstack(panTnseq_Full[,c(1,18)]),unstack(panTnseq_Full[,c(1,11)]))
+Tnlist <- append(unstack(panTnseq_Full[,c(1,17)]),unstack(panTnseq_Full[,c(1,10)]))
 v1 <- ggVennDiagram(Tnlist,set_color=colorines,label="count",label_alpha=0,show_intersect = FALSE) +
     scale_fill_gradientn(colours=colorscale)
 u1 <- ggVennDiagram(Tnlist,force_upset = TRUE,order.set.by = "none", order.intersect.by = "none")
 #thermus
-Tnlist <- append(unstack(panTnseq_Full[,c(1,19)]),unstack(panTnseq_Full[,c(1,11)]))
+Tnlist <- append(unstack(panTnseq_Full[,c(1,18)]),unstack(panTnseq_Full[,c(1,10)]))
 v2 <- ggVennDiagram(Tnlist,set_color=colorines,label="count",label_alpha=0,show_intersect = FALSE)+
          scale_fill_gradientn(colours=colorscale)
 u2 <- ggVennDiagram(Tnlist,force_upset = TRUE,order.set.by = "none", order.intersect.by = "none")
 #thermaceae
-Tnlist <- append(unstack(panTnseq_Full[,c(1,20)]),unstack(panTnseq_Full[,c(1,11)]))
+Tnlist <- append(unstack(panTnseq_Full[,c(1,19)]),unstack(panTnseq_Full[,c(1,10)]))
 v3 <- ggVennDiagram(Tnlist,set_color=colorines,label="count",label_alpha=0,show_intersect = FALSE)+
          scale_fill_gradientn(colours=colorscale)
 u3 <- ggVennDiagram(Tnlist,force_upset = TRUE,order.set.by = "none", order.intersect.by = "none")
 #deino
-Tnlist <- append(unstack(panTnseq_Full[,c(1,21)]),unstack(panTnseq_Full[,c(1,11)]))
+Tnlist <- append(unstack(panTnseq_Full[,c(1,20)]),unstack(panTnseq_Full[,c(1,10)]))
 v4 <- ggVennDiagram(Tnlist,set_color=colorines,label="count",label_alpha=0,show_intersect = FALSE)+
          scale_fill_gradientn(colours=colorscale)
 u4 <- ggVennDiagram(Tnlist,force_upset = TRUE,order.set.by = "none", order.intersect.by = "none")
@@ -319,41 +329,38 @@ u4 <- ggVennDiagram(Tnlist,force_upset = TRUE,order.set.by = "none", order.inter
 #ggarrange(u1+labs(title=expression(italic("T. thermophilus"))), v2+labs(title=expression(italic("Thermus"))), v3+labs(title=expression(italic("Thermaceae"))), v4+labs(title=expression(italic("Deinococcaceae"))), ncol=2,nrow=2,common.legend=TRUE,legend = "bottom")
 paste("T. thermophilus")
 u1
+ggsave("Tth_upset.svg",width=4,height=4)
 paste("Thermus")
 u2
 paste("Thermaceae")
 u3
 paste("Deinococcota")
 u4
- 
-
-
 ```
 
 
-Now, let's try Euler diagrams.
 
-```{r euler, fig.height=10,fig.width=10, fig.cap=capFig("Venn diagram of TnSeq genes categories and Persistant genes in each pangenome).")}
+```{r euler, eval=FALSE, fig.height=10,fig.width=10, fig.cap=capFig("Venn diagram of TnSeq genes categories and Persistant genes in each pangenome).")}
 #svg("figure4c.svg")
 par(mfrow = c(2, 2),mar=c(1,1,1,1))
 
 #thermus termophilus
-Tnmat <- rbind(as.data.frame(as.list(panTnseq_Full[,c(1,11)]),col.names=c("Genes","group")),
-               as.data.frame(as.list(panTnseq_Full[,c(1,18)]),col.names=c("Genes","group")))
+Tnmat <- rbind(as.data.frame(as.list(panTnseq_Full[,c(1,10)]),col.names=c("Genes","group")),
+               as.data.frame(as.list(panTnseq_Full[,c(1,17)]),col.names=c("Genes","group")))
 plot(venneuler(na.omit(Tnmat)),col=c("#FF9966","#619CFF" , "#3366CC","#bbe59f","#abc837","#339933"),alpha=0.7,main=expression(italic("T. thermophilus")))
 
 #thermus
-Tnmat <- rbind(as.data.frame(as.list(panTnseq_Full[,c(1,11)]),col.names=c("Genes","group")),
-               as.data.frame(as.list(panTnseq_Full[,c(1,19)]),col.names=c("Genes","group")))
+Tnmat <- rbind(as.data.frame(as.list(panTnseq_Full[,c(1,10)]),col.names=c("Genes","group")),
+               as.data.frame(as.list(panTnseq_Full[,c(1,18)]),col.names=c("Genes","group")))
 plot(venneuler(na.omit(Tnmat)),col=c("#FF9966","#619CFF" , "#3366CC","#bbe59f","#abc837","#339933"),alpha=0.7,main=expression(italic("Thermus")))
 
 #termaceae
-Tnmat <- rbind(as.data.frame(as.list(panTnseq_Full[,c(1,11)]),col.names=c("Genes","group")),
-               as.data.frame(as.list(panTnseq_Full[,c(1,20)]),col.names=c("Genes","group")))
+Tnmat <- rbind(as.data.frame(as.list(panTnseq_Full[,c(1,10)]),col.names=c("Genes","group")),
+               as.data.frame(as.list(panTnseq_Full[,c(1,19)]),col.names=c("Genes","group")))
 plot(venneuler(na.omit(Tnmat)),col=c("#FF9966","#619CFF" , "#3366CC","#bbe59f","#abc837","#339933"),alpha=0.7,main=expression(italic("Thermaceae")))
 
 #deinococcota
-Tnmat <- rbind(as.data.frame(as.list(panTnseq_Full[,c(1,11)]),col.names=c("Genes","group")),
+Tnmat <- rbind(as.data.frame(as.list(panTnseq_Full[,c(1,10)]),col.names=c("Genes","group")),
                as.data.frame(as.list(panTnseq_Full[,c(1,20)]),col.names=c("Genes","group")))
 plot(venneuler(na.omit(Tnmat)),col=c("#FF9966","#619CFF" , "#3366CC","#bbe59f","#abc837","#339933"),alpha=0.7,main=expression(italic("Deinococcota")))
 
@@ -384,7 +391,7 @@ ggarrange(p1, p2,
 
 ```
 
-```{r enrichment_uniprot, fig.height=10, fig.cap=capFig("Significantly enriched KEGG Ontology groups made up of Intermediate/Less permissive genes within the Core genome (persistant genes) of Thermus (A), Thermaceae (B) or Deinococcota (C).")}
+```{r enrichment_uniprot, eval=F, fig.height=10, fig.cap=capFig("Significantly enriched KEGG Ontology groups made up of Intermediate/Less permissive genes within the Core genome (persistant genes) of Thermus (A), Thermaceae (B) or Deinococcota (C).")}
 
 uniprot <- bitr_kegg(panTnseq_Full$Genes, fromType="kegg", toType='uniprot', organism='tth')
 panTnseq_Full <- panTnseq_Full %>%
@@ -434,79 +441,130 @@ ggarrange(p1, p2, p3,
   
 ```
 
-# Compare with other species
+# Compare Tn-seq with prokaryotic "essentialtome" and HB27 transcription
 
-## Data from Zhang2018
+## Essential genes in other species
 
-Since there is no clear correlation between gene conservation and the permittivity of Tn5 insertions, we decided to compare our results with previously published results. We used the data from @zhang2018 (SUPPLEMENTARY DATA 4), which includes the essential/non-essential genes of a wide range of prokaryotic organisms comprising extremophilic archaea (*Sulfolobus islandicus* and *Methanococcus maripaludis*) and various mesophilic bacteria (*Bacillus subtilis*, *Bacteroides fragilis*, *Escherichia coli*) as well as the minimal essential genome of *Micoplasma JVCI Syn3.0*.
-
-The following table contains the essential genes in all prokaryotic genomes and their HB27 orthologs as annotated by eggNOG. As you can see, out of 52 genes annotated as essentia in all thouse prokaryotic organisms, 6 were Highly Permissive and 40 (80%) Intermediate in HB27 TnSeq, but they are again highly conserved as all of them are persistent genes in the *T. thermophilus* pangenome and near 95% are still members of the core genome of *Deinococcota* pangenome.
+Since there is no clear correlation between gene conservation and the permissivity of Tn5 insertions, we decided to compare our results with previously published results. We used the data from @zhang2018 (SUPPLEMENTARY DATA 4), which includes the essential/non-essential genes of a wide range of prokaryotic organisms comprising extremophilic archaea (*Sulfolobus islandicus* and *Methanococcus maripaludis*) and various mesophilic bacteria (*Bacillus subtilis*, *Bacteroides fragilis*, *Escherichia coli*) as well as the minimal essential genome of *Micoplasma JVCI Syn3.0*.
 
 ```{r zhang}
 #data from https://www.nature.com/articles/s41467-018-07379-4
 essentiality <- read_xlsx("bacteria_essential_genes/41467_2018_7379_MOESM6_ESM.xlsx",sheet=1)
 colnames(essentiality)[2] <- "eggNOG_OGs"
-world_essential <- merge(panTnseq_Full,essentiality,by="eggNOG_OGs")
+panTnseq_Full$eggNOG_OGs <- sub("\\@.*", "", panTnseq_Full$eggNOG_OGs)
+world_essential <- merge(panTnseq_Full,essentiality)
 #names(world_essential)
- prok <- subset(world_essential,world_essential[,35]=="essential" & world_essential[,36]=="essential" & world_essential[,39]=="essential" & world_essential[,40]=="essential" & world_essential[,41]=="essential" & world_essential[,42]=="essential")
- 
-datatable(prok[,c(1,2,11,18:21)],rownames = FALSE,  escape = FALSE, filter="top", extensions = 'Responsive',options = list( pageLength = 25, autoWidth = TRUE ))
-#table to save
-#kbl(prok[,c(1,22,23,30:33)], align = "c", row.names = FALSE,col.names= c("eggNOG","Description","TnSeq","T. thermophilus","Thermus","Thermaceae","Deinococcota"), caption = "Table 2. Tth TnSeq and Pangenome analysis of selected prokaryotic essential genes from diverse previous works. See Methods for details.") %>%
- #   kable_styling(bootstrap_options = "condensed", full_width = F, position = "center") %>%
-  #  column_spec(1, bold = T, italic=F) %>% save_kable("table2.pdf",self_contained=TRUE)
+ prok <- subset(world_essential,world_essential$`Sulfolobus islandicus M.16.4`=="essential" & world_essential$`Methanococcus maripaludis S2`=="essential" & world_essential$`Bacillus subtilis`=="essential" & world_essential$`Bacteroides fragilis`=="essential" & world_essential$`Escherichia coli`=="essential" & world_essential$`Mycoplasma JCVI Syn3.0`=="essential")
 ```
 
-## Based on Rancati et al. ([PMID 29033457](https://pubmed.ncbi.nlm.nih.gov/29033457/), Supp. Table S1)
 
-We also downloaded the data from the papers indicated below and parsed the essential genes. To unify nomenclature, we tried to obtain the EggNOG COG code for each gene and used it to merge genes with different names across the different species. All data was parsed with an external [R script](scripts/essentials.R) to generate a common table ([all_essentials.csv](bacteria_essential_genes/all_essentials.csv)).
+The following table contains the essential genes in all prokaryotic genomes and their HB27 orthologs as annotated by eggNOG. As you can see, out of `r nrow(prok)` genes annotated as essentia in all thouse prokaryotic organisms, `r nrow(prok[prok$cluster=="Highly Permissive",])` were Highly Permissive and `r nrow(prok[prok$cluster=="Intermediate",])` (`r round(nrow(prok[prok$cluster=="Intermediate",])*100/nrow(prok),1)`%) Intermediate in HB27 TnSeq, but they are again highly conserved as all of them are persistent genes in the *T. thermophilus* pangenome and near `r round(nrow(prok[prok$deinococcota_i4c5 =="persistent",])*100/nrow(prok),1)`% are still members of the core genome of *Deinococcota* pangenome.
 
-| Strain                           | Ref. PMID                                                         | Assembly        | FileName                        |
-|---------------|----------------------------|---------------|---------------|
-| E. coli K12                      | [29463657](https://pubmed.ncbi.nlm.nih.gov/29463657/)             | GCF_000800765.1 | mbo001183726st1.xlsx            |
-| M. tuberculosis H37Rv            | [28096490](https://pubmed.ncbi.nlm.nih.gov/28096490/)             | GCF_000195955.2 | mbo002173137st3.xlsx            |
-| M. genitalum G37                 | [16407165](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1324956/) | GCA_000027325.1 | pnas_0510013103_10013Table2.xls |
-| P. aerugionsa PAO1               | [25848053](https://pubmed.ncbi.nlm.nih.gov/25848053/)             | GCF_000006765.1 | pnas.1422186112.sd01.xlsx       |
-| S. aureus HG003                  | [25888466](https://pubmed.ncbi.nlm.nih.gov/25888466/)             | GCF_000013425.1 | 12864_2015_1361_MOESM2_ESM.xlsx |
-| S. pyogenes (5448 & NZ131)       | [25996237](https://pubmed.ncbi.nlm.nih.gov/25996237/)             | GCA_000011765.2 | srep09838-s1.pdf (Table S3!)    |
-| Synechococcus elongatus PCC 7942 | [26508635](https://pubmed.ncbi.nlm.nih.gov/26508635/)             | GCF_000012525.1 | pnas.1519220112.sd03.xlsx       |
+
+```{r prok_table} 
+datatable(prok[,c(1,2,10,17:20)],rownames = FALSE,  escape = FALSE, filter="top", extensions = 'Responsive',options = list( pageLength = 25, autoWidth = TRUE ))
+#table to save
+library(kableExtra)
+kbl(prok[,c(1,4,10,17:20)], align = "c", row.names = FALSE,col.names= c("eggNOG","Description","TnSeq","T. thermophilus","Thermus","Thermaceae","Deinococcota"), caption = "Table 2. Tth TnSeq and Pangenome analysis of selected prokaryotic essential genes from diverse previous works (Zhang et al. 2018). See Methods for details.", "html") %>%
+    kable_styling(bootstrap_options = "condensed", full_width = F, position = "center") %>%
+    column_spec(1, bold = T, italic=F) #%>% save_kable("table2_new.pdf",self_contained=TRUE)
+```
+
+To quantify the correlation between Tn-seq, gene conservation in pangenomes and gene essentiality, we used the data from @rancati2018, which compares the gene essentiality in diverse bacteria from diverse works. Thus, we downloaded the data from the papers indicated below and parsed the essential genes. To unify nomenclature, we tried to obtain the EggNOG COG code for each gene and used it to merge genes with different names across the different species. All data was parsed with an external [R script](scripts/essentials.R) to generate a common table ([all_essentials.csv](bacteria_essential_genes/all_essentials.csv)).
+
+| Strain | Ref. PMID | Assembly | FileName |
+|----------------|-------------------------|----------------|----------------|
+| E. coli K12 | [29463657](https://pubmed.ncbi.nlm.nih.gov/29463657/) | GCF_000800765.1 | mbo001183726st1.xlsx |
+| M. tuberculosis H37Rv | [28096490](https://pubmed.ncbi.nlm.nih.gov/28096490/) | GCF_000195955.2 | mbo002173137st3.xlsx |
+| M. genitalum G37 | [16407165](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1324956/) | GCA_000027325.1 | pnas_0510013103_10013Table2.xls |
+| P. aerugionsa PAO1 | [25848053](https://pubmed.ncbi.nlm.nih.gov/25848053/) | GCF_000006765.1 | pnas.1422186112.sd01.xlsx |
+| S. aureus HG003 | [25888466](https://pubmed.ncbi.nlm.nih.gov/25888466/) | GCF_000013425.1 | 12864_2015_1361_MOESM2_ESM.xlsx |
+| S. pyogenes (5448 & NZ131) | [25996237](https://pubmed.ncbi.nlm.nih.gov/25996237/) | GCA_000011765.2 | srep09838-s1.pdf (Table S3!) |
+| Synechococcus elongatus PCC 7942 | [26508635](https://pubmed.ncbi.nlm.nih.gov/26508635/) | GCF_000012525.1 | pnas.1519220112.sd03.xlsx |
 
 First, we evaluate the correlation between the essential/indispensable genes with our HB27 TnSeq and pangenome data. As shown below, despite the fact that the bacterial data come from different sources, we see some negative correlation between the number of genomes with essential and dispensable genes. In addition, there is also a moderate positive correlation between gene essentiality and conservation in our pangenome. **However, consistent with previous results, the TnSeq results do not correlate with other analyses**, suggesting that *T. thermophilus* is reluctant to reveal its essential genes.
 
-```{r world, fig.cap=capFig("Correlation between esentiality results in diverse bacteria, the HB27 TnSeq and Pangenome variables. Significant (p<0.05) spearman r² are shown.")}
+## Gene expression in HB27
+
+Finally, we compared Tn-seq, pangenome and transcriptome of HB27 with the abovementioned prokaryotic "essentialtome". We used the data from @swarts2015 that contains triplicate data of gene expression in HB27. The expression level was also used for correlation analysis.
+
+```{r world,  fig.cap=capFig("Correlation between esentiality results in diverse bacteria, the HB27 TnSeq and Pangenome variables. Significant (p<0.05) spearman r² are shown.")}
 
 #data from https://www.nature.com/articles/s41467-018-07379-4
 
 essential_mix <- read.csv2("bacteria_essential_genes/all_essentials.csv")
 world_essential <- merge(world_essential,essential_mix,by="eggNOG_OGs")
-fwrite(world_essential,"bacteria_essential_genes/all_essentials_panTnseq_18nov.csv", sep=";")
+fwrite(world_essential,"bacteria_essential_genes/all_essentials_panTnseq_25feb25.csv", sep=";")
 
 
-#correlations
-world_essential$TnSeq <- as.numeric(factor(world_essential$cluster, levels=c("Less Permissive","Intermediate","Highly Permissive")))
-world_essential[,c(35:53)] <- lapply(world_essential[,c(35:53)], as.factor)
-world_essential[,c(12,13,14,15,18,19,20,21,35:53)] <- lapply(world_essential[,c(12,13,14,15,18,19,20,21,35:53)], as.numeric)
-M <-cor(world_essential[,c(12,13,14,15,18,19,20,21,53,54)], method = "spearman", use = "pairwise.complete.obs")
-testRes <-  cor.mtest(world_essential[,c(12,13,14,15,18,19,20,21,53,54)], conf.level = 0.99,method = "spearman", na.action="omit")
-corrplot(M, type="lower", p.mat=testRes$p, method = 'circle', insig='blank',
-         tl.col="black",tl.srt = 45, addCoef.col ='black', number.cex = 0.6,tl.cex=0.5, col=brewer.pal(n=8, name="Spectral"))
+#add rnaseq in HB27
+rnaseq <- read_xlsx("bacteria_essential_genes/pone.0124880.s002.xlsx",sheet=1)
+names(rnaseq)[2] <- "Genes"
+panTnseq_Full2 <-  merge(world_essential,rnaseq[,c(2,7:9)],by="Genes",all.x=TRUE)
+panTnseq_Full2[,c(11:16,21:28,50:54)] <- lapply(panTnseq_Full2[,c(11:16,21:28,50:54)], as.numeric)
 
-#table
-#datatable(world_essential[,c(16,28,11,12,21,29:32)],rownames = FALSE,  escape = FALSE, filter="top", extensions = 'Responsive',options = list( pageLength = 25, autoWidth = TRUE ))
+M <-cor(panTnseq_Full2[,c(11:14,22,24,26,28,50:54)], method = "spearman", use = "pairwise.complete.obs")
+testRes <-  cor.mtest(panTnseq_Full2[,c(11:14,22,24,26,28,50:54)], conf.level = 0.99)
+corrplot(M, type="lower", p.mat = testRes$p, method = 'circle', insig='blank',
+         tl.col="black",tl.srt = 45, addCoef.col ='black', number.cex = 0.5,tl.cex=0.5, col=brewer.pal(n=8, name="Spectral"))
 
+```
 
+```{r rancati_venn, eval=F, echo=F, fig.width=10, fig.cap=capFig("Venn diagrams showing the intersection of Tn-seq Less Permissive genes, Persistent genes of pangenomes at each taxonomic level and the genes with 4 or more ortholog/paralogs identified as essential in the bacteria compared in Rancati et al.")}
+
+x <- list(
+  Less_permissive = panTnseq$Genes[panTnseq$cluster=="Less Permissive"],
+  Persistent = panTnseq$Genes[panTnseq$tt_i4c5=="persistent"],
+   Essential = panTnseq_Full2$Genes[panTnseq_Full2$essential>=4]
+  )
+tt <- ggvenn(
+  x, 
+  fill_color = c("#3366CC","#339933","#EFC000FF"),
+  stroke_size = 0.5, set_name_size = 4,show_percentage = FALSE
+  ) + ggtitle("Thermus thermophilus") + theme(plot.title = element_text(hjust = 0.5))+
+   scale_x_continuous(expand = expansion(mult = c(0.15, 0.15)))
+
+x[[2]] <- panTnseq$Genes[panTnseq$thermus_i4c5=="persistent"]
+
+thermus <- ggvenn(
+  x, 
+   fill_color = c("#3366CC","#339933","#EFC000FF"),
+  stroke_size = 0.5, set_name_size = 4,show_percentage = FALSE
+  ) + ggtitle("Thermus") + theme(plot.title = element_text(hjust = 0.5))+
+   scale_x_continuous(expand = expansion(mult = c(0.15, 0.15)))
+
+x[[2]] <- panTnseq$Genes[panTnseq$thermaceae_i4c5=="persistent"]
+
+thermaceae <- ggvenn(
+  x, 
+  fill_color = c("#3366CC","#339933","#EFC000FF"),
+  stroke_size = 0.5, set_name_size = 4,show_percentage = FALSE
+  ) + ggtitle("Thermaceae") + theme(plot.title = element_text(hjust = 0.5))+
+   scale_x_continuous(expand = expansion(mult = c(0.15, 0.15)))
+
+x[[2]] <- panTnseq$Genes[panTnseq$deinococcota_i4c5=="persistent"]
+
+deinococcota <- ggvenn(
+  x, 
+ fill_color = c("#3366CC","#339933","#EFC000FF"),
+  stroke_size = 0.5, set_name_size = 4, show_percentage = FALSE
+  ) + ggtitle("Deinococcota") + theme(plot.title = element_text(hjust = 0.5))+
+   scale_x_continuous(expand = expansion(mult = c(0.15, 0.15)))
+
+ggarrange(tt, thermus, thermaceae, deinococcota, 
+          labels = c("A", "B","C","D"), ncol=2,nrow = 2)
 ```
 
 The detailed table of bacteria essential genes and HB27 TnSeq+Pangenome data can be found in file [all_essentials_panTnseq.csv](bacteria_essential_genes/all_essentials_panTnseq.csv).
 
-This can be also easily shown if we plot the number of genomes with essential genes by the TnSeq group of those genes.
-
-```{r fig.cap=capFig("Ratio (%) of genes in each TnSeq group by the number of genomes with essential genes. The number of genes in each group is indicated")}
+```{r eval=FALSE,fig.cap=capFig("Ratio (%) of genes in each TnSeq group by the number of genomes with essential genes. The number of genes in each group is indicated")}
 
 
 ggplot(as.data.frame(table(world_essential$essential,world_essential$cluster)),aes(x=Var1, y=Freq,group=Var2)) + 
          geom_bar(aes(fill=Var2),stat = "identity",position="fill",color="grey40", alpha=0.8) +  geom_text(aes(label=Freq),size=4, position = position_fill(vjust=0.5) , col = "black")+ xlab("Number genomes with each essential gene") + ylab("TnSeq group (%)") +scale_y_continuous(labels = scales::percent) + theme_bw()+ labs(fill = "TnSeq group")
 ```
+
+Overall, multiple correlation analysis shows a moderate correlation between expression levels and ortholog gene essentiality, but slight negative correlation with Tn-seq Z-score. Thus, highly transcribed genes in HB27 are abundant within the highly conserved (persistent) group and overall they would get somewhat less hits in our Tn-seq. Altogether, these results indicate that despite the different lifestyles and phylogenetic distances among the genomes examined in prior essentiality studies, the expected higher conservation of universally essential genes is applicable to Tth, even though, in this case, the Tn-seq approach may not readily disclose most of essential genes.
 
 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
 
@@ -514,10 +572,12 @@ ggplot(as.data.frame(table(world_essential$essential,world_essential$cluster)),a
 
 </button>
 
-<div id="collapseOne" class="accordion-collapse collapse">
-
+:::: {#collapseOne .accordion-collapse .collapse}
 <div>
 
 ```{r}
 sessionInfo()
 ```
+
+</div>
+::::

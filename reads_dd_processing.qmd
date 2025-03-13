@@ -19,7 +19,7 @@ number-sections: true
 number-depth: 1
 code-overflow: wrap
 code-fold: true
-code-summary: "Show the code"
+code-summary: "Show code"
 link-external-icon: true
 link-external-newwindow: true 
 editor: visual
