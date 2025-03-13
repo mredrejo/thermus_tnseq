@@ -1,0 +1,44 @@
+project:
+  type: website
+  output-dir: docs
+website:
+  title: "Thermus TnSeq"
+  search:
+    location: navbar
+    type: overlay
+  navbar:
+    background: dark
+    pinned: true
+    tools:
+    - icon: github
+      href: https://github.com/mredrejo/thermus_tnseq
+    right:
+    - href: index.qmd
+      text: Home
+    - text: Contents
+      menu:
+      - reads_dd_processing.qmd
+      - genes_classification_dd.qmd
+      - panthermus_dd.qmd
+
+  page-footer:
+    left: "MRR, 2024"
+    right:
+    - icon: badge-cc-fill
+      href: https://creativecommons.org/licenses/by-nc/2.0/
+    - text: "{{< iconify fa6-brands x-twitter >}}"
+      href: https://twitter.com/mredrejo
+    - text: "{{< iconify simple-icons bluesky >}}"
+      href: https://bsky.app/profile/mredrejo.bsky.social
+  page-navigation: true
+  back-to-top-navigation: true
+format:
+  html:
+    theme: united
+    fontcolor: black
+    toc: true
+    smooth-scroll: true
+    anchor-sections: true
+    link-external-icon: true
+    link-external-newwindow: true
+editor: visual

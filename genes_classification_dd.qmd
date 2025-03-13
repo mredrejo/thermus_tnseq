@@ -1,0 +1,562 @@
+---
+title: "TnSeq Genes classification"
+author: 
+  - name: Modesto
+    affiliation: Department of Biochemistry, UAM
+    affiliation_url: https://www.uam.es/
+date: "April 26, 2024"
+date-modified: "`r format(Sys.time(), '%Y-%m-%d (%H:%M h)')`"
+format: 
+  html:
+    page-layout: full
+toc: true
+toc-location: left
+toc-depth: 3
+number-sections: true
+number-depth: 1
+code-overflow: wrap
+code-fold: true
+code-summary: "Show the code"
+link-external-icon: true
+link-external-newwindow: true 
+editor: visual
+bibliography: references.bib
+---
+
+```{r config, eval=TRUE, include=FALSE}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+knitr::opts_chunk$set(echo = TRUE)
+paquetes <- c("knitr","formatR","ggplot2","data.table","DT","readxl","RColorBrewer", "dplyr","tidyverse","ggpubr","details","factoextra","cluster","ggpmisc","clusterProfiler","DESeq2","dbscan")
+unavailable <- setdiff(paquetes, rownames(installed.packages()))
+if ("Rsubread" %in% unavailable) {   BiocManager::install("Rsubread")
+} else if ("clusterProfiler" %in% unavailable) {   BiocManager::install("Rsubread")
+    } 
+install.packages(unavailable)
+lapply(paquetes, library, character.only = TRUE)
+
+#Figure and Table Caption Numbering, for HTML do it manually
+outputFormat   = opts_knit$get("rmarkdown.pandoc.to")
+capTabNo = 1; capFigNo = 9;
+
+#Function to add the Table Number
+capTab = function(x){
+  if(outputFormat == 'html_document'){
+    x = paste0("Table ",capTabNo,". ",x)
+    capTabNo <<- capTabNo + 1
+  }; x
+}
+
+#Function to add the Figure Number
+figuritas <- data.frame()
+capFig = function(x){
+  if(outputFormat == 'html'){
+    x = paste0("Figure ",capFigNo,". ",x)
+    capFigNo <<- capFigNo + 1
+  }; x
+ figuritas[(capFigNo-1),1] <<- x
+}
+```
+
+## Classification of genes by Z-scores
+
+First, let's check the density plots, to see how the data are grouped.
+
+```{r density, fig.height=8, fig.width=7, fig.cap=capFig("Distribution of Z-scores in density (A) and histogram (B) plots.")}
+#read data
+scores <- read.csv2("scores80_11nov2024.csv")
+scores <- cbind(rownames(scores),scores[,1:4])
+samples <- c("Ppol_1"="TNB01", "Ppol_2"="TNB09","HB27_1"="TNB03", "HB27_2"="TNB07")
+names(scores) <- c("Genes",names(samples))
+scores[,2:5] <- lapply(scores[,2:5],as.numeric)
+scores$mean <- apply(scores[,2:5], 1, mean,na.rm=TRUE)
+#replace NAs for the mean
+#for (i in 2:5){
+#  for (j in 1:nrow(scores)){
+#    scores[j,i][is.na(scores[j,i])] <- scores[j,6]
+#  }
+#}
+my.cols <- brewer.pal(4, "Paired")
+#density plot
+den <- ggplot(data=stack(scores[,2:6]))+geom_density(aes(x=as.numeric(values),fill=ind,color=ind), alpha=0.4)+
+    scale_color_manual(values=c(my.cols,"black")) +
+  scale_fill_manual(values=c(my.cols,"black")) +
+    geom_vline(aes(xintercept=-0.5), color="grey", linetype="dashed")+
+    geom_vline(aes(xintercept=0.5), color="orange", linetype="dashed") + xlab("Z-scores") +
+  theme_bw()
+#Hist
+hist <- ggplot(data=stack(scores[,2:6]))+geom_histogram(aes(x=as.numeric(values),fill=ind,color=ind, alpha=0.2),binwidth=0.2)+
+     #scale_color_manual(values=c(my.cols,"black")) +
+     #scale_fill_manual(values=c(my.cols,"black")) +
+  scale_color_brewer(palette="Paired") + scale_fill_brewer(palette="Paired")+   
+  geom_vline(aes(xintercept=-0.6), color="grey", linetype="dashed")+
+     geom_vline(aes(xintercept=1),
+                color="orange", linetype="dashed") + xlab("Z-scores") + facet_grid(~ind) +
+     theme_bw()
+#ggsave("fig2b",hist+theme(legend.position = "none"),width=6,height=4)
+ggarrange(den, hist, 
+          labels = c("A", "B"), ncol=1,nrow = 2)
+ 
+```
+
+Consistent with Figure 8, we can see that most genes are clustered at a Z-score \<0, with a peak around -0.5 ([grey line]{style="color:grey;"}) and a shoulder centered at 1 ([orange line]{style="color:orange;"}). This indicates that most genes have a low number of insertions and that there is a gradient of genes up to a very high number of insertions.
+
+In previous bacteria, the TnSeq data follow a bimodal distribution consisting of an exponential distribution of essential genes and a gamma family curve for the non-essential genes, with an inflection point in between [@goodall2018.; @moule2014; @valentino2014; @higgins2020; @ramsey2020; @a.ghomi2024], even in polyploid bacteria [@rubin2015]. However, there is no inflection point in our data, so we confirm that there are no clear groups of essential/non-essential genes and only a gamma distribution can be fitted (p-value 2x10^-16^).
+
+To make an approximate classification of the genes, we will perform an unsupervised cluster analysis. A similar approach was also used in a recent work [@a.ghomi2024], using DBSCAN algorithm. However, in that work they also have bimodal curve and more clear density separation of the score index. With our data, we obtained two large groups with wide range of overlapping index that was no very informative. 
+
+
+
+```{r echo=TRUE, eval=TRUE, fig.cap=capFig("DBSCAN algorithm clustering")}
+
+cl<-dbscan(scores[,c(2:5)],eps=0.65,MinPts = 200)
+hullplot(scores[,c(2:5)],cl$cluster)
+```
+```{r echo=TRUE, eval=TRUE, fig.cap=capFig("DBSCAN clustering results")}
+tmp <- cbind(stack(scores[,2:5]),scores[,6],cl$cluster)
+names(tmp) <- c("values","ind","mean","cluster")
+ggplot(data=tmp) +
+  geom_point(aes(x=reorder(1:nrow(tmp),tmp[,3],decreasing=TRUE),y=values,color=as.factor(cluster)), alpha=0.7)+
+  theme_classic() +
+  scale_x_discrete(expand = c(0.01, 0)) + 
+  theme(axis.text.x = element_blank(),axis.text.y=element_text(size=12,face="bold")) +
+  ylab("Z-Score (log2)") + xlab("Gene") + facet_grid(~tmp[,2]) +
+  scale_color_brewer(palette="Paired") + theme(legend.position = c(0.9, 0.7)) +
+  labs(color="")
+
+```
+
+
+
+Thus, we decided to use a more classical approach and compare K-means and PAM clustering. First, we will test the number of clusters that allow us to better classify the genes.
+
+```{r clustering, fig.height=4, fig.width=7, fig.cap=capFig("Determination of best number of clusters for the TnSeq data, using the elbow (A) or silhouette (B) method. Panels (C) and (D) show the number of clusters by PAM and K-means, respectively.)")}
+
+#wss o silhoutte?
+wss <- fviz_nbclust(scores[,2:5], FUN = hcut, method = "wss" , linecolor = "darkblue") + labs(title= "Elbow (WSS)") 
+si <- fviz_nbclust(scores[,2:5], FUN = hcut, method = "silhouette", linecolor = "darkblue")+ labs(title= "SILHOUETTE") 
+
+#kmeans, pam 
+pam <- fviz_nbclust(x = scores[,2:5], FUNcluster = cluster::pam, method = "silhouette", k.max = 10) + labs(title= "PAM clustering") 
+k <- fviz_nbclust(x = scores[,2:5], FUNcluster = kmeans, method = "silhouette", k.max = 10) + labs(title= "K-means clustering")
+
+
+
+ggarrange(wss, si, pam,k,
+          labels = c("A", "B","C","D"), ncol=2,nrow = 2)
+         
+
+```
+
+Now, we will compare all the clustering methods, DBSCAN and K-means and PAM with two clusters. We will select the method that yield a higher average silhouette value.
+
+```{r hotspot, fig.width=8, fig.height=8, fig.cap=capFig("Comparison of clustering method. Cluster results and silhouette plots for DBSCAN (A), K-Means (B) and PAM (C) clustering method are shown.")}
+#DBSCAN silhouette
+sil.dbscan <- silhouette(cl$cluster, dist(scores[,c(2:5)]))
+s1 <- fviz_cluster(object = cl, data = scores[,c(2:5)], ellipse.type = "t",labelsize = 0,
+              repel = FALSE) +
+     theme_bw() +
+     labs(title = "DBSCAN clustering") +
+     theme(legend.position = "none")
+s2 <- fviz_silhouette(sil.dbscan, palette="jco")+  theme(    panel.background = element_rect(fill = "white"))
+
+#kmeans
+kmclust2 <- eclust(scores[,2:5], k=2, FUNcluster="kmeans", hc_metric="manhattan",graph=F)
+k1 <- fviz_cluster(object = kmclust2, data = datos, ellipse.type = "t",labelsize = 0,
+             repel = FALSE) +
+  theme_bw() +
+  labs(title = "Kmeans clustering") +
+  theme(legend.position = "none")
+
+k2 <- fviz_silhouette(kmclust2, palette="jco")+  theme(
+  panel.background = element_rect(fill = "white"))
+
+#pams
+set.seed(123)
+pam_clusters <- pam(x= scores[,2:5], k=2, metric = "manhattan")
+
+
+#visualization
+p1 <- fviz_cluster(object = pam_clusters, data = scores[,2:5], ellipse.type = "t",labelsize = 0,
+             repel = FALSE) +
+  theme_bw() +
+  labs(title = "PAM clustering") +
+  theme(legend.position = "none")
+
+
+p2 <- fviz_silhouette(pam_clusters, palette="jco")+    theme(
+  panel.background = element_rect(fill = "white"))
+
+ggarrange(s1,s2,k1, k2, p1,p2,
+          labels = c("A", "","B","","C",""), ncol=2,nrow = 3)
+  
+
+```
+
+The Kmeans clustering is slightly better as its clusters area are closer to the silhouette mean, thus we will keep this clusters and name them as **"Highly Permissive"** and **"Intermediate"** genes. As shown in the following plot, both groups are well separated.
+
+```{r fig.cap=capFig("Density plot of genes by cluster in each sample.")}
+#full table
+#subset the ~10% genes with less insertions
+datos.j = cbind(scores, cluster= kmclust2$cluster)
+
+ggplot(data=cbind(datos.j$cluster,stack(datos.j[,2:5]))) +xlab("Z-Score (log2)") + ylab("Gene density") + 
+     geom_density(aes(x=as.numeric(values),group=as.factor(`datos.j$cluster`), color=`datos.j$cluster`, fill=`datos.j$cluster`), alpha=0.7)+
+    theme_classic() + facet_grid(~ind)  +labs(fill="Cluster",color="Cluster")
+```
+
+The first group contains the genes with higher Z-score mean and the second large group contains the genes with less insertions. To highlight the top genes with less insertions, we empirically select the \~10% genes with less insertions as **"Less Permissive"** genes, corresponding to 212 genes with a Z-score \< -0.6. This subset is an artificial creation within the “Intermediate” cluster, not distinctly separate from it (Figure 16), but useful for data representation and discussion.
+
+```{r , fig.cap=capFig("Density plot of genes by cluster in each sample including the Less Permissive group")}
+
+#how many?
+#nrow(datos.j[datos.j$HB27_1<(-0.6) & datos.j$HB27_2<(-0.6)  & datos.j$Ppol_1<(-0.6)  & datos.j$Ppol_2<(-0.6) ,])
+
+datos.j$cluster[datos.j$Ppol_1<(-0.6) & datos.j$Ppol_2<(-0.6)  & datos.j$HB27_1<(-0.6)  & datos.j$HB27_2<(-0.6)] <- 3
+datos.j$cluster <- as.factor(datos.j$cluster)
+
+datos.j <- datos.j %>% 
+    mutate(across(c('Ppol_1', 'Ppol_2',"HB27_1","HB27_2","mean"), round, 3)) %>% 
+mutate(cluster = case_when(cluster == 1 ~ "Intermediate", cluster == 2 ~ "Highly Permissive",cluster==3 ~ "Less Permissive")) 
+
+ggplot(data=cbind(datos.j$cluster,stack(datos.j[,2:5]))) +xlab("Z-Score") + ylab("Gene density") +
+     geom_density(aes(x=as.numeric(values),group=as.factor(`datos.j$cluster`), color=`datos.j$cluster`, fill=`datos.j$cluster`), alpha=0.7)+
+    theme_classic() + facet_grid(~ind)  +labs(fill="Cluster",color="Cluster")
+
+
+```
+
+The separation between the "Intermediate" and "Highly Permissive" cluster is not very clear, as expected. Thus, for some analysis, we will consider these groups as only **one same cluster**. The following table contain the genes Z-score and classification in three groups.
+
+```{r}
+datatable(datos.j,rownames = FALSE,  escape = FALSE, filter="top", extensions = 'Responsive',options = list( pageLength = 25, autoWidth = TRUE ))
+
+#save final table
+write.table(datos.j,"scores_clusters_11nov2024.csv",sep=";",row.names=FALSE)
+```
+
+
+
+### Plot Z-scores per gene and groups
+
+Let's see how are the groups in each sample. Note that the genes are ordered by their mean score.
+
+```{r fig.height=8, fig.cap=capFig("Plot of Tn insertion Z-scores per gene and group. Density plot in all samples (A) and mean values (B). Values were sorted by the average of all samples.")}
+tmp <- cbind(stack(datos.j[,2:5]),datos.j[,6:7])
+p1 <- ggplot(data=tmp) +
+  geom_point(aes(x=reorder(1:nrow(tmp),tmp[,3],decreasing=TRUE),y=values,color=cluster), alpha=0.7)+
+  theme_classic() +
+  scale_x_discrete(expand = c(0.01, 0)) + 
+  theme(axis.text.x = element_blank(),axis.text.y=element_text(size=12,face="bold")) +
+  ylab("Z-Score (log2)") + xlab("Gene") + facet_grid(~tmp[,2]) +
+  scale_color_manual(values=c("#FF9966", "#619CFF" ,"#3366CC")) + theme(legend.position = c(0.9, 0.7)) +
+  labs(color="")
+#histogram
+#ggplot(data=tmp) +xlab("Z-Score (log2)") + ylab("Gene density") + 
+ #    geom_histogram(aes(x=as.numeric(values),color=cluster, fill=cluster), alpha=0.7, binwidth=0.2)+
+  #   theme_classic() + facet_grid(~ind) 
+#final plot for paper
+p2 <- ggplot(data=datos.j[,6:7]) +xlab("Z-Score") + ylab("Gene density") +
+     geom_density(aes(x=as.numeric(mean),group=as.factor(cluster), color=cluster, fill=cluster), alpha=0.7)+
+     theme_classic()   +labs(fill="Group",color="Group")+scale_fill_manual(values=c("#FF9966","#619CFF" , "#3366CC"))+scale_color_manual(values=c("#FF9966", "#619CFF" ,"#3366CC"))+guides(fill=guide_legend(position = "inside"))+theme(legend.position.inside = c(0.8,0.7))
+ggsave("fig3a.pdf",p2,width=4,height=2.5)
+ggarrange(p1, p2,
+          labels = c("A", "B"), ncol=1)
+
+```
+
+### Comparing WT vs Ppol strains
+
+Although there is overall no differences between strains, we are going to check in detail if there is any gene with statistically significant more/less Tn insertions.
+
+```{r fig.cap=capFig("Volcano plot of differential Tn5 target genes in HB27 vs. Ppol strains (fold change >4, p.adj<0.01).")}
+#meethod from https://lashlock.github.io/compbio/R_presentation.html
+#we need to use raw counts as integers, no Z-scores and only complete cases
+countData <- read.csv('tnseq_dd_counts_scores_all.csv', header = TRUE, sep = ";")
+countData <- na.omit(countData[,c(1,7,9,11,13)])
+countData[,2:5] <- lapply(countData[,2:5], as.integer)
+
+metaData <- data.frame(names(countData[,2:5]),c("Ppol","Ppol","HB27","HB27"),c("Exp1","Exp2","Exp1","Exp2"))
+
+names(metaData) <- c("Sample","Strain","Experiment")
+
+dds <- DESeqDataSetFromMatrix(countData=countData, 
+                              colData=metaData, 
+                              design=~Strain, tidy = TRUE)
+dds <- DESeq(dds)
+res <- results(dds)
+
+res <- res[order(res$padj),]
+
+res$diffexpressed <- "NO"
+res$diffexpressed[res$log2FoldChange > 2 & res$padj < 0.01] <- "UP"
+res$diffexpressed[res$log2FoldChange < -2 & res$padj < 0.01] <- "DOWN"
+
+library(ggrepel)
+# plot adding up all layers we have seen so far
+ggplot(data=res, aes(x=log2FoldChange, y=-log10(pvalue), col=diffexpressed, label=row.names(res))) +
+        geom_point() + 
+        theme_minimal() +
+        geom_text_repel() +
+        scale_color_manual(values=c("blue", "black", "red")) #+
+        #geom_vline(xintercept=c(-2, 2), col="red") +
+        #geom_hline(yintercept=-log10(0.05), col="red")
+```
+
+As we can see there are genes with significant differences between samples.
+
+## Genes functional classification
+
+### COG
+
+```{r}
+nog <- read_xlsx("00_raw/refs/MM_x4qgl_mt.emapper.annotations.xlsx",sheet=1,skip=2)
+nog$seed_ortholog <- gsub("262724.","",nog$seed_ortholog)
+names(nog)[2] <- "Genes"
+
+```
+
+After calculating the Z-scores, we are going to group the genes by their functions, using COG and KEGG functional categories. Functional annotation was obtained at EggNog mapper website @cantalapiedra2021. We could annotate `r length(nog$COG_category[nog$COG_category!="-"])` (**`r round(length(nog$COG_category[nog$COG_category!="-"])*100/length(nog$COG_category),2)`**%) of the HB27 proteins.
+
+```{r fig.width=12, fig.cap=capFig("COG groups annotated in HB27 genes")}
+
+#load COG list
+cog <- read.table("scripts/cog_list.csv",sep=";",header=TRUE)
+cog <- cog[-26,]
+
+#summarize and split categories
+categories <- c()
+for (i in 1:nrow(cog)){
+  categories <- grep(cog$category[i],nog$COG_category)
+  cog$sum[i] <- length(categories)
+}
+
+#plot freqs
+ggplot(cog,aes(y=as.numeric(sum), x=definition,color=group,fill=group)) + 
+    geom_bar(stat="identity", position="stack", alpha=0.8) + ylab("Number of genes") + xlab("") + coord_flip() + scale_y_continuous(breaks = seq(0, 500, by = 100))+
+  theme_classic() + theme(text=element_text(size=15),legend.text=element_text(size=9))
+```
+
+After the incorporation of COG and KEGG annotations, the final TnSeq table is exported as [tnSeq_dd_full.csv](tnSeq_dd_full.csv).
+
+```{r cog, warning=FALSE, fig.width=6,fig.height=8, fig.cap=capFig("Tn insertion scores per gene. Correlation between samples in WT (A) and Ppol (B) strains. Genes are colored by COG group")}
+#merge
+final <- merge(datos.j,nog[,c(2,5,7,8,12)], all.x=TRUE)
+
+final$COG_category <- final$COG_category %>% replace_na('-')
+for (i in 1:nrow(final)){
+  if (final$COG_category[i]!='-'){
+      final$COG_group[i] <- cog$group[cog$category == substr(final$COG_category,1,1)[i]]  } else{
+        final$COG_group[i]=='-'
+    }
+}
+final$COG_group <- as.factor(final$COG_group)
+
+#add Mario gene annotation
+mario <- readxl::read_excel("00_raw/refs/HB8_HB27_final.xlsx")
+mario <- subset(mario,!is.na(mario$HB27))
+mario <- mario[,c(7,4,3,6,5,2)]
+colnames(mario) <- c("Genes","Genes_HB8","locus_tag","name","Description","aa")
+final <- merge(final,mario,by="Genes", all.x=TRUE)
+final$mean <- apply(final[,2:5],1,mean)
+final$sd <- apply(final[,2:5],1,sd)
+final[grep("tRNA-",final$name),9] <- "J"
+final[grep("tRNA-",final$name),11] <- "ko:K14228"
+final[grep("rRNA",final$name),11] <- "ko:K01980"
+final <- final %>% replace(is.na(.), '-')
+final[,8] <- substr(final[,8],1,7)
+final <- final[,c(1,7:16,2:6,18)]
+write.table(final,"tnSeq_dd_full.csv", sep=";", row.names=FALSE)
+
+#correlation
+wt <- ggplot(data = final, aes(x=HB27_1,y=HB27_2,color=COG_group))+geom_point(size=3,alpha=0.6) +  theme_linedraw() + 
+  xlab("HB27_1") + ylab("HB27_2") + stat_poly_line(color="#1F78B4",fill="#1F78B4") +
+  stat_poly_eq(use_label(c("adj.R2", "p"))) +guides(color = guide_legend(nrow = 2))
+
+
+ppol <- ggplot(data = final, aes(x=Ppol_1,y=Ppol_2,color=COG_group))+geom_point(size=3,alpha=0.6)  + theme_linedraw() +
+  xlab("Ppol_1") + ylab("Ppol_2") +  stat_poly_line(color="#33A02C",fill="#33A02C") +
+  stat_poly_eq(use_label(c("adj.R2", "p"))) 
+
+
+ggarrange(wt, ppol,
+          labels = c("A", "B"), ncol=1,common.legend = TRUE,legend="bottom")
+
+```
+
+
+Now, we are going to plot the genes by groups and COG
+
+```{r cog2, fig.width=10,fig.height=4, fig.cap=capFig("Distribution of gene groups by COG functions")}
+stats <- as.data.frame(table(final$COG_category,final$cluster))
+categories <- c()
+for (i in 1:nrow(cog)){
+  categories <- grep(cog$category[i],stats$Var1)
+  categories_D <- subset(stats[categories,], Var2=="Highly Permissive")
+  categories_R <- subset(stats[categories,], Var2=="Intermediate")
+  categories_T <- subset(stats[categories,], Var2=="Less Permissive")
+  cog$Less_permissive[i] <- sum(categories_T$Freq)
+  cog$Intermediate[i] <- sum(categories_R$Freq)
+  cog$Highly_permissive[i] <- sum(categories_D$Freq)
+}
+cog2 <- cbind(cog[,1:3],stack(cog[,5:7]))
+cog2 <- cog2 %>% replace(is.na(.), 0)
+for (i in 1:nrow(cog2)){
+  cog2$ratio[i] <- cog2$values[i]*100/sum(cog2$values[cog2$category==cog2$category[i]])
+}
+cog2$ind <- factor(cog2$ind,levels=c("Highly_permissive","Intermediate","Less_permissive"))
+
+
+#plot 
+ggplot(cog2[!cog2$values==0,],aes(y=ratio, x=definition, group=ind, fill=ind)) + 
+    geom_bar(stat="identity", position="stack",color="grey40", alpha=0.8) + ylab("Gene category (%)") + xlab("") + coord_flip() + scale_y_continuous(breaks = seq(0, 100, by = 10)) +   theme_bw() + theme(text=element_text(size=15))+scale_fill_manual(values=c("#FF9966", "#619CFF" ,"#3366CC"))+labs(fill="Group")
+#ggsave("figs5a.pdf",width=10,height=3.5)
+```
+
+```{r cog3, fig.width=10,fig.height=4, fig.cap=capFig("Abundance of Less Permissive genes amongst COG functions")}
+ggplot(cog2[!cog2$values==0 & cog2$ind=="Less_permissive",],aes(y=ratio, x=definition, group=ind)) + 
+     geom_bar(stat="identity", position="stack", fill="steelblue", alpha=0.8) + ylab("Gene category (%)") + xlab("") + coord_flip() + scale_y_continuous(breaks = seq(0, 100, by = 10)) +   theme_bw() + theme(text=element_text(size=15))
+#gsave("figs5b.pdf",width=9,height=4)
+```
+
+### KEGG
+
+EggNog mapper could assign KEGG Ontology (KO) group to `r length(nog$KEGG_ko[nog$KEGG_ko!="-"])` (**`r round(length(nog$KEGG_ko[nog$KEGG_ko!="-"])*100/length(nog$KEGG_ko),2)`**%) of the HB27 proteins. After revision of the KO annotation, we manually incorporated several missing tRNA genes to improve the statistics, using K14228 (tRNA-leu).
+
+```{r kegg, fig.width=12,fig.height=130, fig.cap=capFig("Ratio of Highly Permissive (blue), Intermediate (green) and Less Permissive (red) genes in each KEGG Ontology group")}
+
+#parse data and count
+ko <- fread("scripts/ko.csv",sep=";",header=TRUE)
+trna <- read.csv2("scripts/tRNAs.csv",header = FALSE)
+final$KEGG_ko <- gsub("ko:","",final$KEGG_ko)
+#tRNAs annotation is not very good, so we corrected for statistics
+#all tRNAs not annotated were masked as K14228 (tRNA-leu)
+final$KEGG_ko[final$Genes %in% trna$V1] <- "K14228"
+
+duplicate_ko_rows <- function(data) {
+  data %>% 
+    mutate(reaction_ko = strsplit(KEGG_ko, ",")) %>%  # Split ko annotations
+    unnest(reaction_ko) %>%                         # Unnest each annotation into separate rows
+    select(-KEGG_ko)                            # Keep original columns except split annotations
+}
+datos_unnested <- duplicate_ko_rows(final)
+
+stats <- summarise(group_by(datos_unnested,reaction_ko,cluster),count =n())
+stats <- plyr::join(stats,ko[,c(1:3,5)])
+
+
+#xtabs
+xkegg <- as.data.frame(xtabs(count~a_class+b_class+pathway+cluster,data=stats))
+xkegg <- xkegg[!xkegg$Freq==0,]
+
+for (i in 1:nrow(xkegg)){
+  xkegg$ratio_b[i] <- xkegg$Freq[i]*100/sum(xkegg$Freq[xkegg$b_class==xkegg$b_class[i]])
+}
+
+
+xkegg$ratio_b <- as.numeric(xkegg$ratio_b)
+
+xkegg$a_class <- as.factor(xkegg$a_class)
+xkegg$b_class <- as.factor(xkegg$b_class)
+xkegg$cluster <- factor(xkegg$cluster,levels=c("Less Permissive","Intermediate","Highly Permissive"))
+
+#plot main kegg categories
+#ggplot(xkegg,aes(y=ratio_b, x=b_class, group=factor(ind), fill=ind)) +   geom_bar(stat="identity", position="stack",color="grey40",linewidth=0.2, alpha=0.7) + ylab("KO group (%)") + xlab("") + theme_bw() + theme(text=element_text(size=15), axis.text.x = element_text( angle = 45,  hjust = 1, size = 12),plot.margin =margin(l=100,b=10,t=5,r=5) )   + facet_grid(~factor(a_class),scales="free",space="free",drop=TRUE,labeller = as_labeller(factor(xkegg$a_class), default=label_wrap_gen(14)))
+
+#detailed kegg plot
+ggplot(xkegg, aes(y=Freq, x=pathway, group=cluster, fill=cluster)) + 
+     geom_bar(stat="identity", position="stack",color="grey40",linewidth=0.2, alpha=0.7) + ylab("KO group members") + xlab("") + theme_bw() + theme(text=element_text(size=15), axis.text.x = element_text( angle = 45,  hjust = 1, size = 12),plot.margin =margin(l=100,b=10,t=5,r=5) )  +
+     facet_wrap(~a_class+b_class,scales="free",drop=TRUE,ncol=3, labeller = label_wrap_gen(30))  + theme(legend.position = "none")
+ 
+```
+
+### KEGG Ontology groups with more Less Permissive genes
+
+Now we, will plot only the "Less Permissive" genes.
+
+```{r topkegg, fig.width=12, fig.height=5, fig.cap=capFig("KEGG ontology categories for Less Permissive genes")}
+ggplot(xkegg[xkegg$cluster=="Less Permissive" & xkegg$Freq>5,], aes(y=Freq, x=pathway, group=cluster)) +     geom_bar(stat="identity", position="stack",linewidth=0.2, alpha=0.7, fill="steelblue") + ylab("KO group members") + xlab("") + theme_bw()+ theme(text=element_text(size=15),plot.margin =margin(l=100,b=10,t=5,r=5) ) + coord_flip()
+```
+
+**Ribosome, transporters and some energy metabolism** proteins are the categories with more *Less Permissive* genes.
+
+### KEGG pathways with Intermediate/Less Permissive genes
+
+```{r}
+repli <- nog$Genes[grep("map03030",nog$KEGG_Pathway)]
+repli <- datos.j[datos.j$Genes %in% repli,]
+repli_link <- paste0("https://www.kegg.jp/kegg-bin/show_pathway?tth03030/",paste0(repli[repli$cluster!="Highly Permissive",1],collapse="/"))
+
+
+ber <- nog$Genes[grep("map03410",nog$KEGG_Pathway)]
+ber <- datos.j[datos.j$Genes %in% ber,]
+ber_link <- paste0("https://www.kegg.jp/kegg-bin/show_pathway?tth03410/",paste0(ber[ber$cluster!="Highly Permissive",1],collapse="/"))
+
+ner <- nog$Genes[grep("map03420",nog$KEGG_Pathway)]
+ner <- datos.j[datos.j$Genes %in% ner,]
+ner_link <- paste0("https://www.kegg.jp/kegg-bin/show_pathway?tth03420/",paste0(ner[ner$cluster!="Highly Permissive",1],collapse="/"))
+
+mmr <- nog$Genes[grep("map03430",nog$KEGG_Pathway)]
+mmr <- datos.j[datos.j$Genes %in% mmr,]
+mmr_link <- paste0("https://www.kegg.jp/kegg-bin/show_pathway?tth03430/",paste0(mmr[mmr$cluster!="Highly Permissive",1],collapse="/"))
+
+hr <- nog$Genes[grep("map03440",nog$KEGG_Pathway)]
+hr <- datos.j[datos.j$Genes %in% hr,]
+hr_link <- paste0("https://www.kegg.jp/kegg-bin/show_pathway?tth03430/",paste0(hr[hr$cluster!="Highly Permissive",1],collapse="/"))
+
+rpo <- nog$Genes[grep("map03020",nog$KEGG_Pathway)]
+rpo <- datos.j[datos.j$Genes %in% rpo,]
+rpo_link <- paste0("https://www.kegg.jp/kegg-bin/show_pathway?tth03020/",paste0(rpo[rpo$cluster!="Highly Permissive",1],collapse="/"))
+
+ribo <- nog$Genes[grep("map03010",nog$KEGG_Pathway)]
+ribo <- datos.j[datos.j$Genes %in% ribo,]
+ribo_link <- paste0("https://www.kegg.jp/kegg-bin/show_pathway?tth03010/",paste0(ribo[ribo$cluster!="Highly Permissive",1],collapse="/"))
+ribo_link <- paste0(ribo_link,paste0("/",paste0(c("TT_C3035","TT_C3056","TT_C3036","TT_C3055","TT_C3024","TT_C3048"),collapse ="/")))
+```
+
+As an example, you can see some of the HB27 RNA transcrition & translation and DNA replication & repair pathways in the following links: `r paste0("[Ribosome](", ribo_link,")")`{target="_blank"}, `r paste0("[RNA Polymerase](", rpo_link,")")`{target="_blank"}, `r paste0("[DNA Replication](", repli_link,")")`{target="_blank"}, `r paste0("[Base Excision Repair](", ber_link,")")`{target="_blank"}, `r paste0("[Mismatch Repair](", mmr_link,")")`{target="_blank"}, `r paste0("[Nucleotide Excision Repair](", ner_link,")")`{target="_blank"}, and `r paste0("[Homologous Recombination](", hr_link,")")`{target="_blank"}. The genes with orthologs in HB27 are depicted with green background and the Intermediate/Less Permissive genes are highlighted in red.
+
+
+```{r enrichment_pan, eval=FALSE,error=FALSE, fig.height=8, fig.cap=capFig("Significantly enriched KEGG Ontology groups made up of Less Permissive & Intermediate genes by KEGG ontology groups (A) or KEGG modules (B).")}
+
+tt <- search_kegg_organism('Thermus thermophilus', by='scientific_name')
+kk <- enrichKEGG(gene         = datos.j[datos.j$cluster=="Less Permissive"|datos.j$cluster=="Intermediate",1],
+                 organism     = 'tth',
+                 pvalueCutoff = 0.05)
+if (sum(kk@result$p.adjust<0.05)!=0){
+  p1 <- dotplot(kk, title="Significant enriched KO")
+} else {
+  p1 <- c()
+}
+
+
+mkk <- enrichMKEGG(gene         = datos.j[datos.j$cluster=="Less Permissive"|datos.j$cluster=="Intermediate",1],
+                 organism     = 'tth',
+                   pvalueCutoff = 1,
+                   qvalueCutoff = 1)
+if (sum(mkk@result$p.adjust<0.05)!=0){
+p2 <- dotplot(mkk, title="Significant enriched KEGG modules")
+}else {
+  p2 <- c()
+}
+
+
+ggarrange(p1, p2, 
+          labels = c("A", "B"), ncol=1,nrow = 2,heights=c(1,3))
+       
+
+```
+
+<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+
+*Click for Session Information*
+
+</button>
+
+<div id="collapseOne" class="accordion-collapse collapse">
+
+<div>
+
+```{r}
+sessionInfo()
+```
