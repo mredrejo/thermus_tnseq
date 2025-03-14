@@ -232,9 +232,9 @@ high <- c()
 intermediate <- c()
 less <- c()
 for (i in 1:4){
-  high[i] <- nrow(subset(panTnseq,panTnseq[,16+i]=="persistent"  & panTnseq$cluster=="Highly Permissive" ))
-   intermediate[i] <- nrow(subset(panTnseq,panTnseq[,16+i]=="persistent" & panTnseq$cluster=="Intermediate" ))
-   less[i] <- nrow(subset(panTnseq,panTnseq[,16+i]=="persistent" & panTnseq$cluster=="Less Permissive" ))
+  high[i] <- nrow(subset(panTnseq,panTnseq[,17+i]=="persistent"  & panTnseq$cluster=="Highly Permissive" ))
+   intermediate[i] <- nrow(subset(panTnseq,panTnseq[,17+i]=="persistent" & panTnseq$cluster=="Intermediate" ))
+   less[i] <- nrow(subset(panTnseq,panTnseq[,17+i]=="persistent" & panTnseq$cluster=="Less Permissive" ))
 }
 stats <- data.frame(high,intermediate,less)
 row.names(stats) <- names(pangenomes)
@@ -295,10 +295,10 @@ deinococcota <- ggvenn(
 
 ggarrange(tt, thermus, thermaceae, deinococcota, 
           labels = c("A", "B","C","D"), ncol=2,nrow = 2)
-names(panTnseq_Full)
+#names(panTnseq_Full)
 ```
 
-Venn Diagrams
+Upset Diagrams allow more detailed comparisons:
 
 ```{r venn2, eval=T}
 colorscale <- c("white","aquamarine","aquamarine1","aquamarine2","aquamarine3","aquamarine4")
