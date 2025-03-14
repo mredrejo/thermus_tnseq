@@ -186,7 +186,7 @@ coverage$Sample <- factor(coverage$Sample, levels=c("TNB01","TNB09","TNB03","TNB
 
 #code for circos plot modified from https://www.royfrancis.com/beautiful-circos-plots-in-r/
 #coverage for circos processed in external script "scripts/circos.R"
-load("cov_chr.Rdata")
+load("scripts/cov_chr.Rdata")
 
 #circos plot
 circos.clear()
@@ -234,7 +234,7 @@ circos.track(factors=cov_chr[[4]]$X1, x=cov_chr[[4]]$X2, y=log10(cov_chr[[4]]$X4
 
 ```{r circos2, fig.height=4, fig.width=4, fig.cap=capFig("HB27 wt (green) and Ppol (blue) TnSeq libraries mapping in pTT27 plasmid. Coverage is represented the mean cov per 1 kb widows in log10 scale. Outer circle scale in Mb.")}
 #coverage for circos processed in external script "scripts/circos.R"
-load("cov_pTT27.Rdata")
+load("scripts/cov_pTT27.Rdata")
 
 
 #pTT27 circos plot
@@ -301,7 +301,7 @@ The above plots represent mean coverage per 1000 bp windows, full plots are in t
 
 The two replicates have a smaller range than the primary samples (mother and daughter), but we can still recognize two regions with a very high frequency of insertions in the reverse strand, located at positions 576,160 and 1,457,335 of the chromosome and almost overlapping in the four samples.
 
-We have now decided to investigate these regions in more detail. The first hotspot corresponds to gene *TT_C0593* (Figure 3), which encodes a 5-carboxymethyl-2-hydroxymuconate semialdehyde dehydrogenase, an oxidoreductase involved in tyrosine metabolism that may be dispensable in rich media. This [target region](https://www.ncbi.nlm.nih.gov/nuccore/46197919?report=graph&tracks=%5Bkey:sequence_track,name:Sequence,display_name:Sequence,id:STD649220238,annots:Sequence,ShowLabel:false,ColorGaps:false,shown:true,order:1%5D%5Bkey:gene_model_track,name:Genes,display_name:Genes,id:STD3194982005,annots:Unnamed,Options:MergeAll,CDSProductFeats:false,NtRuler:true,AaRuler:true,HighlightMode:2,ShowLabel:true,shown:true,order:4%5D&assm_context=GCA_000008125.1&v=576118:576214&c=FFFF99&select=gi%7C46197919-0008c7ea-0008cdf5-0101-5294c6b0-ffea8d58&slim=0 "Detail at NCBI browser") corresponds to a GC track, the preferred sequence for Tn5 @green2012. However, as the coverage indicates multiple nearby integration sites, the high integration rate within *TT_C0593* may indicate that this gene is not required rather than a transposase artifact.
+We have now decided to investigate these regions in more detail. The first hotspot corresponds to gene *TT_C0593* (Figure 3), which encodes a 5-carboxymethyl-2-hydroxymuconate semialdehyde dehydrogenase, an oxidoreductase involved in tyrosine metabolism that may be dispensable in rich media. This [target region](https://www.ncbi.nlm.nih.gov/nuccore/46197919?report=graph&tracks=%5Bkey:sequence_track,name:Sequence,display_name:Sequence,id:STD649220238,annots:Sequence,ShowLabel:false,ColorGaps:false,shown:true,order:1%5D%5Bkey:gene_model_track,name:Genes,display_name:Genes,id:STD3194982005,annots:Unnamed,Options:MergeAll,CDSProductFeats:false,NtRuler:true,AaRuler:true,HighlightMode:2,ShowLabel:true,shown:true,order:4%5D&assm_context=GCA_000008125.1&v=576118:576214&c=FFFF99&select=gi%7C46197919-0008c7ea-0008cdf5-0101-5294c6b0-ffea8d58&slim=0 "Detail at NCBI browser") corresponds to a GC track, the preferred sequence for Tn5 [@green2012]. However, as the coverage indicates multiple nearby integration sites, the high integration rate within *TT_C0593* may indicate that this gene is not required rather than a transposase artifact.
 
 ```{r hotspot, fig.width=12, fig.cap=capFig("TnSeq insertion hotspot (A) Detailed coverage (linear scale) in the region 570000-580000 of HB27 chromosome in each sample, Ppol (TNB01), Ppol_rep (TNB09), HB27 (TNB03) and HB27_rep (TNB07). (B) Annotated features in the detailed region. The vertical dashed line indicated the position of the highest coverage.")}
 cov <- ggplot(coverage[coverage$Position > 570000 & coverage$Position < 580000]) +  geom_bar(aes(x=Position,y=Neg * -1),color="red", stat="identity", linewidth=1) +
