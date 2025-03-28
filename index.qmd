@@ -25,7 +25,7 @@ bibliography: references.bib
 
 This site contains the data, scripts and results of a TnSeq experiment performed in *Thermus thermophilus HB27* in the laboratory of [Mario Mencía](mailto:mmencia@cbm.csic.es) & José Berenguer (CBMSO, UAM-CSIC). This analysis was performed by Modesto Redrejo Rodríguez (Biochemistry Department, UAM).
 
-In this study we develop a procedure for thermostable selection of random insertion mutants based on a gene cassette encoding a thermostable resistance to kanamycin flanked by the recognition sites (ME sites) for Tn5 transposase [@kia2017]. The transposition library generated *in vitro* was initialy transformed in a PrimPol mutant HB27 derivative (*ppol*), which shows \~2 log fold transformation efficiency [@garcía-quintans2020]. This allowed the generation of the generation of a large library of insertion mutants (“Mother”), which was later transferred to a wild type HB27 strain (“Daughter”). Both libraries were sequenced straightforward and after several culture passages.
+In this study we develop a procedure for thermostable selection of random insertion mutants based on a gene cassette encoding a thermostable resistance to kanamycin flanked by the recognition sites (ME sites) for Tn5 transposase [@kia2017]. The transposition library generated *in vitro* was initialy transformed in a PrimPol mutant HB27 derivative (*ppol*), which shows \~2 log fold transformation efficiency [@garcía-quintans2020]. This allowed the generation of the generation of a large library of insertion mutants (“Mother”), which was later transferred to a wild type HB27 strain (“Daughter”). Both libraries were sequenced straightforward and after several culture passages. See the manuscript for more details.
 
 ## Funding
 

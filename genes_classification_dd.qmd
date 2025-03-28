@@ -155,7 +155,7 @@ Now, we will compare all the clustering methods, DBSCAN and K-means and PAM with
 sil.dbscan <- silhouette(cl$cluster, dist(scores[,c(2:5)]))
 s1 <- fviz_cluster(object = cl, data = scores[,c(2:5)], ellipse.type = "t",labelsize = 0,
               repel = FALSE) +
-     theme_bw() +
+     theme_bw() + scale_colour_manual(values = c("#0073c2", "#efc000"))+ scale_fill_manual(values = c("#0073c2", "#efc000")) +
      labs(title = "DBSCAN clustering") +
      theme(legend.position = "none")
 s2 <- fviz_silhouette(sil.dbscan, palette="jco")+  theme(    panel.background = element_rect(fill = "white"))
@@ -163,7 +163,7 @@ s2 <- fviz_silhouette(sil.dbscan, palette="jco")+  theme(    panel.background = 
 #kmeans
 kmclust2 <- eclust(scores[,2:5], k=2, FUNcluster="kmeans", hc_metric="manhattan",graph=F)
 k1 <- fviz_cluster(object = kmclust2, data = datos, ellipse.type = "t",labelsize = 0,
-             repel = FALSE) +
+             repel = FALSE) + scale_colour_manual(values = c("#0073c2", "#efc000"))+ scale_fill_manual(values = c("#0073c2", "#efc000")) +
   theme_bw() +
   labs(title = "Kmeans clustering") +
   theme(legend.position = "none")
@@ -177,8 +177,7 @@ pam_clusters <- pam(x= scores[,2:5], k=2, metric = "manhattan")
 
 
 #visualization
-p1 <- fviz_cluster(object = pam_clusters, data = scores[,2:5], ellipse.type = "t",labelsize = 0,
-             repel = FALSE) +
+p1 <- fviz_cluster(object = pam_clusters, data = scores[,2:5], ellipse.type = "t",labelsize = 0,  repel = FALSE) + scale_colour_manual(values = c("#0073c2", "#efc000"))+ scale_fill_manual(values = c("#0073c2", "#efc000")) +
   theme_bw() +
   labs(title = "PAM clustering") +
   theme(legend.position = "none")
@@ -517,7 +516,7 @@ ribo_link <- paste0(ribo_link,paste0("/",paste0(c("TT_C3035","TT_C3056","TT_C303
 As an example, you can see some of the HB27 RNA transcrition & translation and DNA replication & repair pathways in the following links: `r paste0("[Ribosome](", ribo_link,")")`{target="_blank"}, `r paste0("[RNA Polymerase](", rpo_link,")")`{target="_blank"}, `r paste0("[DNA Replication](", repli_link,")")`{target="_blank"}, `r paste0("[Base Excision Repair](", ber_link,")")`{target="_blank"}, `r paste0("[Mismatch Repair](", mmr_link,")")`{target="_blank"}, `r paste0("[Nucleotide Excision Repair](", ner_link,")")`{target="_blank"}, and `r paste0("[Homologous Recombination](", hr_link,")")`{target="_blank"}. The genes with orthologs in HB27 are depicted with green background and the Intermediate/Less Permissive genes are highlighted in red.
 
 ## Enrichment analysis
-```{r enrichment_pan, eval=TRUE,error=FALSE, fig.height=8, fig.cap=capFig("Significantly enriched KEGG Ontology groups made up of Less Permissive genes by KEGG ontology groups (A) or KEGG modules (B).")}
+```{r enrichment_pan, eval=TRUE,error=FALSE, fig.height=4, fig.cap=capFig("Significantly enriched KEGG Ontology groups made up of Less Permissive genes by KEGG ontology groups. There is no enriched KEGG module in this group")}
 
 
 kk <- enrichKEGG(gene         = datos.j[datos.j$cluster=="Less Permissive",1],
@@ -540,9 +539,9 @@ p2 <- dotplot(mkk, title="Significant enriched KEGG modules")
   p2 <- c()
 }
 
-
-ggarrange(p1, p2, 
-          labels = c("C", "D"), ncol=1,nrow = 2,heights=c(1,3))
+p1
+#ggarrange(p1, p2, 
+ #         labels = c("A", "B"), ncol=1,nrow = 2,heights=c(1,3))
        
 
 ```
